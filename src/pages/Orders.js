@@ -171,7 +171,33 @@ function Orders() {
                 )
               })
               }
+            <div>
+              Order Payment - 
+              <div>
+              <p>Order Total - <b>{order.orderTotal}</b></p> 
+              </div>
+              {order.paymentResponse ? (
+                <div>
+                  <p>
+                    Payment Status - {order.paymentResponse.code}
+                   </p> 
+                  <p>
+                    Payment Data - {order.paymentResponse.data.amount / 100}
+                   </p> 
+                  <p>
+                    Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                   </p> 
+                 </div> 
+              ) : (null)
 
+              }
+              <div>
+                User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+              </div>
+              <button>
+                To Packing
+              </button>
+            </div>
             </div>
           </div>
          
