@@ -29,6 +29,23 @@ export const apiCheck = () => {
 // * 6.  Dashboard Status
 
 
+export const getAllUsersOrders = () => {
+    return axios.get(`${API}/get/all/orders`).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error)
+    });
+}
+
+
+export const getAUSersOrders = () => {
+    return axios.get(`${API}/get/a/user/${userID}/orders`).then((res) => {
+        return res
+    }).catch((err) => {
+        console.log("Error - ", err);
+    });
+}
+
 
 
 
