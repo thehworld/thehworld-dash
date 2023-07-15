@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { getAllUsersOrders } from "../api/Api";
 
 const options = [
   'Edit',
@@ -23,6 +24,15 @@ const LongMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+
+  const getAllOrders = () => {
+      getAllUsersOrders().then((res) => {
+          console.log("All Orders", res.data);
+      }).catch((err) => {
+        console.log("Error - ", err);
+      })
+  }
 
   return (
     <div>
