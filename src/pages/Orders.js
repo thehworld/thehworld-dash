@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
@@ -15,6 +15,10 @@ const options = [
 
 const ITEM_HEIGHT = 48;
 
+
+
+
+
 const LongMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -26,13 +30,8 @@ const LongMenu = () => {
   };
 
 
-  const getAllOrders = () => {
-      getAllUsersOrders().then((res) => {
-          console.log("All Orders", res.data);
-      }).catch((err) => {
-        console.log("Error - ", err);
-      })
-  }
+
+  
 
   return (
     <div>
@@ -103,8 +102,25 @@ function a11yProps(index) {
   };
 }
 
+
+
+
 function Orders() {
   const [value, setValue] = React.useState(0);
+  const [allOrders, setallOrders] = useState([])
+
+  const getAllOrders = () => {
+      getAllUsersOrders().then((res) => {
+          console.log("All Orders", res.data.orders);
+          setallOrders(res.data.orders);
+      }).catch((err) => {
+        console.log("Error - ", err);
+      })
+  }
+  
+  useEffect(() => {
+      getAllOrders();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -131,20 +147,42 @@ function Orders() {
         <Tab label="Delivered" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
+        
+        {allOrders.length > 0 && allOrders.map((order, index) => {
+          return(
+            <div className="order-cont">
+            <div className="order-card">
+              <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+              <div style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+              <LongMenu />
+              </div>
+              <h4>order id: {order._id}</h4>
+              <h5>order status: {order.paymentStatus}</h5>
+              <h5>received date&time: {order.createdAt}</h5>
+              <h5>pincode: {order.shipmentPincode}</h5>
+              {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                return(
+                  <>
+                            <h5>item item: {prod.product.productName}</h5>
+                            <p>item qty: {prod.qty}</p>
+                            <p>item price: {prod.product.productPrice}</p>
+                            <p>item discount price: {prod.product.productDiscountPrice}</p>
+                  </>
+                )
+              })
+              }
+
             </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
           </div>
-        </div>
+         
+          )
+        })
+          
+        }
+        
+       
+        
+       
       </TabPanel>
       <TabPanel value={value} index={1}>
         <div className="order-cont">

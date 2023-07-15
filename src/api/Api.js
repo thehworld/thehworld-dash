@@ -3,8 +3,9 @@ import axios from "axios"
 const API = "https://thehworld-v1.onrender.com/api/web";
 const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
+const API_DEV = "http://localhost:8080/api/web"
 
-const API_USE = API;
+const API_USE = API_DEV;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
@@ -31,7 +32,7 @@ export const apiCheck = () => {
 
 
 export const getAllUsersOrders = () => {
-    return axios.get(`${API}/get/all/orders`).then((res) => {
+    return axios.get(`${API_USE}/get/all/orders`).then((res) => {
         return res
     }).catch((error) => {
         console.log("Error - ", error)
@@ -39,8 +40,8 @@ export const getAllUsersOrders = () => {
 }
 
 
-export const getAUSersOrders = (userID) => {
-    return axios.get(`${API}/get/a/user/${userID}/orders`).then((res) => {
+export const getAUsersOrders = (userID) => {
+    return axios.get(`${API_USE}/get/a/user/${userID}/orders`).then((res) => {
         return res
     }).catch((err) => {
         console.log("Error - ", err);
