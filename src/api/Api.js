@@ -23,7 +23,8 @@ export const apiCheck = () => {
 
 
 // * 1.  Manage Order
-// ?          1.1 Get All Orders - 
+// ?          1.1 Get All Orders - DONE
+// ?          1.2 Get A Orders - 
 // * 2.  Manage Shipment
 // * 3.  Manage Products / Categories
 // * 4.  Manage Users
@@ -40,6 +41,8 @@ export const getAllUsersOrders = () => {
 }
 
 
+
+
 export const getAUsersOrders = (userID) => {
     return axios.get(`${API_USE}/get/a/user/${userID}/orders`).then((res) => {
         return res
@@ -49,7 +52,15 @@ export const getAUsersOrders = (userID) => {
 }
 
 
+// ?? Users
 
+export const getAllUsers = () => {
+    return axios.get(`${API_USE}/users/get/all`).then((res) => {
+        return res
+    }).catch((err) => {
+        console.log("Error - ", err);
+    });
+}
 
 
 
