@@ -9,19 +9,25 @@ const UserDetails = () => {
 
 
     const [aUserDetails, setaUserDetails] = useState("");
+    const [userOrdersList, setuserOrdersList] = useState([]);
 
     const getaUserDetails = () => {
         getAUser(userId).then((res) => {
             console.log("User Info - ", res)
             setaUserDetails(res.data.user);
+            setuserOrdersList(res.data.user.userOrders);
         }).catch((err) => {
             console.log("Error - ", err);
         })  
     }
 
+    
+
     useEffect(() => {
         getaUserDetails()
     },[])
+
+    
 
 
 
@@ -37,7 +43,7 @@ const UserDetails = () => {
             </p>
             <div class="user-preview" style={{
                 height: '100%',
-                backgroundColor: '#F4F4F4'
+                backgroundColor: '#FFFFFF'
             }}>
   <div class="user-info" style={{
     textAlign: 'center'
@@ -45,13 +51,21 @@ const UserDetails = () => {
     <img src={aUserDetails.userProfilePic} alt="User Photo"/>
     <h2>User Name {aUserDetails.userGoogleName}</h2>
     <p>Address: {aUserDetails.userEmail}</p>
+    <p style={{
+        fontSize:18,
+        
+    }}>Phone: <b>{aUserDetails.contactNumber}</b></p>
+    <p style={{
+        fontSize:18,
+        
+    }}>WA Phone: <b>{aUserDetails.contactWAForAuto}</b></p>
   </div>
   <div class="user-orders" style={{
     textAlign: 'center'
   }}>
     <h3>Orders:</h3>
     {aUserDetails.userCart && aUserDetails.userCart.map((user, index) => {
-        return(
+        return( 
         <div>
             <h4>Name: {user.product.productName}</h4>
             <p>Product Name: {user.product.productName}</p>
