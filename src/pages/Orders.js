@@ -6,6 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getAllUsersOrders } from "../api/Api";
+import { useNavigate } from "react-router-dom";
 
 const options = [
   'Edit',
@@ -14,6 +15,7 @@ const options = [
 ];
 
 const ITEM_HEIGHT = 48;
+
 
 
 
@@ -109,6 +111,8 @@ function Orders() {
   const [value, setValue] = React.useState(0);
   const [allOrders, setallOrders] = useState([])
 
+  const navigate= useNavigate();
+
   const getAllOrders = () => {
       getAllUsersOrders().then((res) => {
           console.log("All Orders", res.data.orders);
@@ -147,11 +151,11 @@ function Orders() {
         <Tab label="Delivered" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
+      <div className="order-cont">
         
         {allOrders.length > 0 && allOrders.map((order, index) => {
           return(
-            <div className="order-cont">
-            <div className="order-card">
+            <div className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
               <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
               <div style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
               <LongMenu />
@@ -199,14 +203,13 @@ function Orders() {
               </button>
             </div>
             </div>
-          </div>
          
           )
         })
           
         }
         
-       
+       </div>
         
        
       </TabPanel>

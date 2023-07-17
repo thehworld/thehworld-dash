@@ -41,6 +41,13 @@ export const getAllUsersOrders = () => {
 }
 
 
+export const getAOrderDetails = (orderID) => {
+    return axios.get(`${API_USE}/get/a/order/${orderID}`).then((res) => {
+        return res;
+    }).catch((err) => {
+        console.log("Error - ", err);
+    });
+}
 
 
 export const getAUsersOrders = (userID) => {
