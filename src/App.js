@@ -9,7 +9,7 @@ import Notification from "./pages/Notification";
 import Orders from "./pages/Orders";
 import Manage from "./pages/Manage";
 import DetailedOrder from "./pages/Order/DetailedOrder";
-import { Payments } from "@mui/icons-material";
+import Payment from "./pages/Payment/payment";
 
 
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
 
 
           {/* All Payment Details */}
-          <Route path="/payments" element={<Payments />} />
+          <Route path="/payments" element={<Payment />} />
         </Routes>
       </Router>
     </div>

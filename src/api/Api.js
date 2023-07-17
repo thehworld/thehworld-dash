@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API = "https://thehworld-v1.onrender.com/api/web";
+const API = "https://thehworld-service-commerce.onrender.com/api/web";
 const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
 const API_DEV = "http://localhost:8080/api/web"
