@@ -5,7 +5,7 @@ const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
 const API_DEV = "http://localhost:8080/api/web"
 
-const API_USE = API_DEV;
+const API_USE = API;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
@@ -55,6 +55,16 @@ export const getAUsersOrders = (userID) => {
         return res
     }).catch((err) => {
         console.log("Error - ", err);
+    });
+}
+
+export const changrOrderStatus = (status) => {
+    return axios.post(`${API_USE}/change/order/status`, {
+        status: status
+    }).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
     });
 }
 

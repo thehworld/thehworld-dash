@@ -142,6 +142,16 @@ function Orders() {
       )
     }
   }
+
+
+  const [orderStatusChecker, setorderStatusChecker] = useState(false)
+
+  const orderStatus = (e, status) => {
+    e.preventDefault();
+
+
+  }
+
   return(
     <Container>
      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -210,8 +220,30 @@ function Orders() {
               <div>
                 User WhatsApp Order Automation - {order.orderUpdateWAPhone}
               </div>
-              <button>
-                To Packing
+              <button onClick={(e) => orderStatus(e, "Accept")} style={{
+                margin:5
+              }}>
+                Accept
+              </button>
+              <button onClick={(e) => orderStatus(e, "Packed")} style={{
+                margin:5
+              }}>
+              Packed
+              </button>
+              <button onClick={(e) => orderStatus(e, "Dispatched")} style={{
+                margin:5
+              }}>
+              Dispatched
+              </button>
+              <button onClick={(e) => orderStatus(e, "In Transit")} style={{
+                margin:5
+              }}>
+              In Transit
+              </button>
+              <button onClick={(e) => orderStatus(e, "Delivered")} style={{
+                margin:5
+              }}>
+                Delivered
               </button>
             </div>
             </div>
