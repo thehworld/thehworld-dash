@@ -10,6 +10,7 @@ import Orders from "./pages/Orders";
 import Manage from "./pages/Manage";
 import DetailedOrder from "./pages/Order/DetailedOrder";
 import Payment from "./pages/Payment/payment";
+import UserDetails from "./pages/User/UserDetails";
 
 
 export default function App() {
@@ -21,9 +22,11 @@ export default function App() {
           <Route path="/" exact element={<Home/>} />
           <Route path="/manage" element={<Manage/>} />
           <Route path="/blogs" element={<Blogs/>} />
-          <Route path="/users" element={<Users />} />
           <Route path="/notification" element={<Notification />} />
 
+          {/* All Users */}
+          <Route path="/users" element={<Users />} />
+          <Route path="/user/:userId" element={<UserDetails />} />
 
           {/* All Order Based Route */}
           <Route path="/orders" element={<Orders />} />

@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { getAUser, getAllUsers } from '../api/Api';
 import { useNavigate } from 'react-router-dom';
-
+import "./Users.css"
 
 
 export default function Users() {
@@ -40,9 +40,10 @@ export default function Users() {
         <div style={{ height: "80vh", width: '100%' }}>
         <h3 style={{padding: "10px", textAlign: "center", marginTop: "20px"}} className="poppinsBold">USERS</h3>
         <div class="user-list">
+        <div class="grid-container">
         {allUsers && allUsers.map((user, index) => {
         return(
-          <div class="user" onClick={() => navigate(`/user/${user._id}`)}>
+          <div className="grid-item" onClick={() => navigate(`/user/${user.userId}`)}>
           <img src={user.userProfilePic} alt={user.userGoogleName}/>
           <h3>Name: {user.userName}</h3>
           <p>Phone: {user.contactNumber}</p>
@@ -51,6 +52,8 @@ export default function Users() {
         )
        })
        }
+
+</div>
  
 </div>
  
