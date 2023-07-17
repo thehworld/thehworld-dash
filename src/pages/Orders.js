@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Container, Input, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
@@ -71,15 +71,17 @@ const LongMenu = () => {
     </div>
   );
 }
-function TabPanel(props) {
+
+
+function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -91,7 +93,7 @@ function TabPanel(props) {
   );
 }
 
-TabPanel.propTypes = {
+CustomTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
@@ -99,19 +101,20 @@ TabPanel.propTypes = {
 
 function a11yProps(index) {
   return {
-    id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-
 
 
 
 function Orders() {
   const [value, setValue] = React.useState(0);
   const [allOrders, setallOrders] = useState([])
-
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate= useNavigate();
+  const [isLoading, setisLoading] = useState(false);
+
 
   const getAllOrders = () => {
       getAllUsersOrders().then((res) => {
@@ -129,33 +132,40 @@ function Orders() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const isLoadingSection = () => {
+    if(isLoading){
+      return(
+        <div className="loading">
+          <div></div>
+          <div></div>
+        </div> 
+      )
+    }
+  }
   return(
     <Container>
-      <Box
-      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 450 }}
-    >
-      <Tabs
-        orientation="horizontal"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider' }}
-      >
-        <Tab label="All Orders" {...a11yProps(0)} />
-        <Tab label="New Orders" {...a11yProps(1)} />
-        <Tab label="Packed" {...a11yProps(2)} />
-        <Tab label="In Transit" {...a11yProps(3)} />
-        <Tab label="Shipped" {...a11yProps(4)} />
-        <Tab label="Delivery waiting" {...a11yProps(5)} />
-        <Tab label="Delivered" {...a11yProps(6)} />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-      <div className="order-cont" style={{
-       
-      }}>
-        
-        {allOrders.length > 0 && allOrders.map((order, index) => {
+     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Item One" {...a11yProps(0)} />
+          <Tab label="Item Two" {...a11yProps(1)} />
+          <Tab label="Item Three" {...a11yProps(2)} />
+        </Tabs>
+      </Box>
+      <CustomTabPanel value={value} index={0}>
+      <div className="order-cont">
+          <Container>
+            <Input style={{borderRadius:"1rem"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
+          </Container>
+        {isLoadingSection()}
+            {allOrders && allOrders.filter((order) => {
+              if (searchTerm == "") {
+                return allOrders
+              } else if (order._id.includes(searchTerm)) {
+                return order
+              }
+            }).map((order, index) => {
+              console.log(order)
+
           return(
             <div className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
               <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -214,8 +224,8 @@ function Orders() {
        </div>
         
        
-      </TabPanel>
-      <TabPanel value={value} index={1}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -230,8 +240,8 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -246,8 +256,8 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-      <TabPanel value={value} index={3}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -262,8 +272,8 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-      <TabPanel value={value} index={4}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -278,8 +288,8 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-      <TabPanel value={value} index={5}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={5}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -294,8 +304,8 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-      <TabPanel value={value} index={6}>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
         <div className="order-cont">
           <div className="order-card">
             <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
@@ -310,8 +320,7 @@ function Orders() {
             <p>order query: none</p>
           </div>
         </div>
-      </TabPanel>
-    </Box>
+      </CustomTabPanel>
     </Container>
   )
 }
