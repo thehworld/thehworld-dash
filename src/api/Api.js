@@ -3,8 +3,9 @@ import axios from "axios"
 const API = "https://thehworld-v1.onrender.com/api/web";
 const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
+const API_DEV = "http://localhost:8080/api/web"
 
-const API_USE = API;
+const API_USE = API_DEV;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
@@ -22,6 +23,8 @@ export const apiCheck = () => {
 
 
 // * 1.  Manage Order
+// ?          1.1 Get All Orders - DONE
+// ?          1.2 Get A Orders - 
 // * 2.  Manage Shipment
 // * 3.  Manage Products / Categories
 // * 4.  Manage Users
@@ -30,7 +33,7 @@ export const apiCheck = () => {
 
 
 export const getAllUsersOrders = () => {
-    return axios.get(`${API}/get/all/orders`).then((res) => {
+    return axios.get(`${API_USE}/get/all/orders`).then((res) => {
         return res
     }).catch((error) => {
         console.log("Error - ", error)
@@ -38,8 +41,17 @@ export const getAllUsersOrders = () => {
 }
 
 
-export const getAUSersOrders = () => {
-    return axios.get(`${API}/get/a/user/${userID}/orders`).then((res) => {
+export const getAOrderDetails = (orderID) => {
+    return axios.get(`${API_USE}/get/a/order/${orderID}`).then((res) => {
+        return res;
+    }).catch((err) => {
+        console.log("Error - ", err);
+    });
+}
+
+
+export const getAUsersOrders = (userID) => {
+    return axios.get(`${API_USE}/get/a/user/${userID}/orders`).then((res) => {
         return res
     }).catch((err) => {
         console.log("Error - ", err);
@@ -47,7 +59,15 @@ export const getAUSersOrders = () => {
 }
 
 
+// ?? Users
 
+export const getAllUsers = () => {
+    return axios.get(`${API_USE}/users/get/all`).then((res) => {
+        return res
+    }).catch((err) => {
+        console.log("Error - ", err);
+    });
+}
 
 
 

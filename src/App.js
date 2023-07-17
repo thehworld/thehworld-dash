@@ -8,6 +8,7 @@ import Users from "./pages/Users";
 import Notification from "./pages/Notification";
 import Orders from "./pages/Orders";
 import Manage from "./pages/Manage";
+import DetailedOrder from "./pages/Order/DetailedOrder";
 
 
 export default function App() {
@@ -21,7 +22,11 @@ export default function App() {
           <Route path="/blogs" element={<Blogs/>} />
           <Route path="/users" element={<Users />} />
           <Route path="/notification" element={<Notification />} />
+
+
+          {/* All Order Based Route */}
           <Route path="/orders" element={<Orders />} />
+          <Route path="/order/:orderId" element={<DetailedOrder />} />
         </Routes>
       </Router>
     </div>

@@ -8,25 +8,24 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useSpring, animated } from '@react-spring/web';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { getAllUsers } from '../api/Api';
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'userId', headerName: 'ID', width: 70 },
+  { field: 'userGoogleName', headerName: 'First name', width: 130 },
+  { field: 'userName', headerName: 'Last name', width: 130 },
   {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
+    field: 'userEmail',
+    headerName: 'Email',
     width: 90,
   },
   {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
+    field: 'userProfilePic',
+    headerName: 'Profile Picture',
     width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    
   },
   {
     field: 'profileStatus',
@@ -36,10 +35,8 @@ const columns = [
     width: 160,
   },
   {
-    field: 'email',
-    headerName: 'Email',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
+    field: 'userVerificationCodeStatus',
+    headerName: 'USer Verify',
     width: 160,
   },
   {
@@ -50,14 +47,14 @@ const columns = [
     width: 160,
   },
   {
-    field: 'noOfProducts',
-    headerName: 'No. of products',
+    field: 'contactWAForAuto',
+    headerName: 'Order Update Number',
     type: 'number',
     width: 150,
   },
   {
-    field: 'loggedInDate',
-    headerName: 'Logged in Date',
+    field: 'userAuthCode',
+    headerName: 'User Auth Code',
     sortable: false,
     width: 130,
   },
@@ -67,6 +64,9 @@ const columns = [
     width: 130
   }
 ];
+
+
+
 
 const Fade = React.forwardRef(function Fade(props, ref) {
   const {
@@ -171,15 +171,30 @@ const rows = [
 ];
 
 export default function Users() {
+
+  const [allUsers, setallUsers] = useState([]);
+
+  const getAllUsersFetch = () => {
+    getAllUsers().then((res) => {
+        console.log("Users - ", res);
+        setallUsers(res.data.allUsers);
+    }).catch((err) => {
+        console.log("Error - ", err);
+    })
+  }
+
+  useEffect(() => {
+    getAllUsersFetch()
+  }, [])
+  
+
   return (
     <div>
         <div style={{ height: "80vh", width: '100%' }}>
         <h3 style={{padding: "10px", textAlign: "center", marginTop: "20px"}} className="poppinsBold">USERS</h3>
         <DataGrid
-            rows={rows}
+            rows={allUsers}
             columns={columns}
-            pageSize={10}
-            rowsPerPage={50}
         />
         </div>
     </div>

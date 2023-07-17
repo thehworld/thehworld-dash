@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { getAllUsersOrders } from "../api/Api";
+import { useNavigate } from "react-router-dom";
 
 const options = [
   'Edit',
@@ -13,6 +15,11 @@ const options = [
 ];
 
 const ITEM_HEIGHT = 48;
+
+
+
+
+
 
 const LongMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -23,6 +30,10 @@ const LongMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+
+
+  
 
   return (
     <div>
@@ -93,8 +104,27 @@ function a11yProps(index) {
   };
 }
 
+
+
+
 function Orders() {
   const [value, setValue] = React.useState(0);
+  const [allOrders, setallOrders] = useState([])
+
+  const navigate= useNavigate();
+
+  const getAllOrders = () => {
+      getAllUsersOrders().then((res) => {
+          console.log("All Orders", res.data.orders);
+          setallOrders(res.data.orders);
+      }).catch((err) => {
+        console.log("Error - ", err);
+      })
+  }
+  
+  useEffect(() => {
+      getAllOrders();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -105,7 +135,7 @@ function Orders() {
       sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 450 }}
     >
       <Tabs
-        orientation="vertical"
+        orientation="horizontal"
         variant="scrollable"
         value={value}
         onChange={handleChange}
@@ -121,20 +151,69 @@ function Orders() {
         <Tab label="Delivered" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
+      <div className="order-cont" style={{
+       
+      }}>
+        
+        {allOrders.length > 0 && allOrders.map((order, index) => {
+          return(
+            <div className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
+              <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+              <div style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+              <LongMenu />
+              </div>
+              <p>order id: {order._id}</p>
+              <p>order status: {order.paymentStatus}</p>
+              <p>received date&time: {order.createdAt}</p>
+              <p>pincode: {order.shipmentPincode}</p>
+              {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                return(
+                  <>
+                            <p>item item: {prod.product.productName}</p>
+                            <p>item qty: {prod.qty}</p>
+                            <p>item price: {prod.product.productPrice}</p>
+                            <p>item discount price: {prod.product.productDiscountPrice}</p>
+                  </>
+                )
+              })
+              }
+            <div>
+              Order Payment - 
+              <div>
+              <p>Order Total - <b>{order.orderTotal}</b></p> 
+              </div>
+              {order.paymentResponse ? (
+                <div>
+                  <p>
+                    Payment Status - {order.paymentResponse.code}
+                   </p> 
+                  <p>
+                    Payment Data - {order.paymentResponse.data.amount / 100}
+                   </p> 
+                  <p>
+                    Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                   </p> 
+                 </div> 
+              ) : (null)
+
+              }
+              <div>
+                User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+              </div>
+              <button>
+                To Packing
+              </button>
             </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
+            </div>
+         
+          )
+        })
+          
+        }
+        
+       </div>
+        
+       
       </TabPanel>
       <TabPanel value={value} index={1}>
         <div className="order-cont">
@@ -143,11 +222,11 @@ function Orders() {
             <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
             <LongMenu />
             </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
+            <p>order id: 5852144</p>
+            <p>order status: packing</p>
+            <p>received date&time: 11/2/23, 15:43</p>
+            <p>pincode: 641060</p>
+            <p>ordered item: (1)hair gel, (2)hair oil</p>
             <p>order query: none</p>
           </div>
         </div>
