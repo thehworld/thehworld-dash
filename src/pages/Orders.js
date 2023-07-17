@@ -135,7 +135,7 @@ function Orders() {
       sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 450 }}
     >
       <Tabs
-        orientation="vertical"
+        orientation="horizontal"
         variant="scrollable"
         value={value}
         onChange={handleChange}
@@ -151,7 +151,9 @@ function Orders() {
         <Tab label="Delivered" {...a11yProps(6)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-      <div className="order-cont">
+      <div className="order-cont" style={{
+       
+      }}>
         
         {allOrders.length > 0 && allOrders.map((order, index) => {
           return(
@@ -160,14 +162,14 @@ function Orders() {
               <div style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
               <LongMenu />
               </div>
-              <h4>order id: {order._id}</h4>
-              <h5>order status: {order.paymentStatus}</h5>
-              <h5>received date&time: {order.createdAt}</h5>
-              <h5>pincode: {order.shipmentPincode}</h5>
+              <p>order id: {order._id}</p>
+              <p>order status: {order.paymentStatus}</p>
+              <p>received date&time: {order.createdAt}</p>
+              <p>pincode: {order.shipmentPincode}</p>
               {order.orderProduct.length && order.orderProduct.map((prod, index) => {
                 return(
                   <>
-                            <h5>item item: {prod.product.productName}</h5>
+                            <p>item item: {prod.product.productName}</p>
                             <p>item qty: {prod.qty}</p>
                             <p>item price: {prod.product.productPrice}</p>
                             <p>item discount price: {prod.product.productDiscountPrice}</p>
@@ -220,11 +222,11 @@ function Orders() {
             <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
             <LongMenu />
             </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
+            <p>order id: 5852144</p>
+            <p>order status: packing</p>
+            <p>received date&time: 11/2/23, 15:43</p>
+            <p>pincode: 641060</p>
+            <p>ordered item: (1)hair gel, (2)hair oil</p>
             <p>order query: none</p>
           </div>
         </div>

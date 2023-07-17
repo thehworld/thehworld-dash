@@ -46,7 +46,7 @@ const DetailedOrder = () => {
                         {orderDetail.paymentTotal}
                     </p>
                     <p>
-                        {orderDetail.orderId}
+                        {orderDetail.shipmentAddress}
                     </p>
                     <p>
                         {orderDetail.orderId}
