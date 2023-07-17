@@ -162,10 +162,11 @@ function Orders() {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-      <div className="order-cont">
-          <Container>
+      <Container>
             <Input style={{borderRadius:"1rem"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
           </Container>
+      <div className="order-cont">
+          
         {isLoadingSection()}
             {allOrders && allOrders.filter((order) => {
               if (searchTerm == "") {
