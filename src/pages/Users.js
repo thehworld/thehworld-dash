@@ -10,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import { useSpring, animated } from '@react-spring/web';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { getAllUsers } from '../api/Api';
+import { getAUser, getAllUsers } from '../api/Api';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -32,6 +33,8 @@ export default function Users() {
   }, [])
   
 
+  const navigate = useNavigate();
+
   return (
     <div>
         <div style={{ height: "80vh", width: '100%' }}>
@@ -39,8 +42,8 @@ export default function Users() {
         <div class="user-list">
         {allUsers && allUsers.map((user, index) => {
         return(
-          <div class="user">
-          <img src={user.userProfilePic} alt="User 1"/>
+          <div class="user" onClick={() => navigate(`/user/${user._id}`)}>
+          <img src={user.userProfilePic} alt={user.userGoogleName}/>
           <h3>Name: {user.userName}</h3>
           <p>Phone: {user.contactNumber}</p>
         </div>

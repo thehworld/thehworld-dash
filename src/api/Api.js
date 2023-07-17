@@ -80,7 +80,13 @@ export const getAllUsers = () => {
 }
 
 
-
+export const getAUser = (userId) => {
+    return axios.get(`${API_USE}/get/a/user/${userId}`).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
 
 
 export const getAllCategory = () => {
