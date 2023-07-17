@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAUser } from "../../api/Api";
 
@@ -8,10 +8,12 @@ const UserDetails = () => {
     const { userId } = useParams();
 
 
+    const [aUserDetails, setaUserDetails] = useState("");
 
     const getaUserDetails = () => {
         getAUser(userId).then((res) => {
             console.log("User Info - ", res)
+            setaUserDetails(res.data.user);
         }).catch((err) => {
             console.log("Error - ", err);
         })  
@@ -40,25 +42,43 @@ const UserDetails = () => {
   <div class="user-info" style={{
     textAlign: 'center'
   }}>
-    <img src="user.jpg" alt="User Photo"/>
-    <h2>User Name</h2>
-    <p>Address: 123 Main St, City, Country</p>
+    <img src={aUserDetails.userProfilePic} alt="User Photo"/>
+    <h2>User Name {aUserDetails.userGoogleName}</h2>
+    <p>Address: {aUserDetails.userEmail}</p>
   </div>
   <div class="user-orders" style={{
     textAlign: 'center'
   }}>
     <h3>Orders:</h3>
-    <div>
-      <div>
-        <h4>Order #1</h4>
-        <p>Product A</p>
-        <p>Product B</p>
-      </div>
-      <div>
-        <h4>Order #2</h4>
-        <p>Product C</p>
-      </div>
-    </div>
+    {aUserDetails.userCart && aUserDetails.userCart.map((user, index) => {
+        return(
+        <div>
+            <h4>Name: {user.product.productName}</h4>
+            <p>Product Name: {user.product.productName}</p>
+            <p>Product Price: {user.product.productPrice}</p>
+            <p>Product Dis Price: {user.product.productDiscountPrice}</p>
+        </div>
+        )
+    })
+    }
+    
+  </div>
+  <div class="user-orders" style={{
+    textAlign: 'center'
+  }}>
+    <h3>In Cart:</h3>
+    {aUserDetails.userCart && aUserDetails.userCart.map((user, index) => {
+        return(
+        <div>
+            <h4>Name: {user.product.productName}</h4>
+            <p>Product Name: {user.product.productName}</p>
+            <p>Product Price: {user.product.productPrice}</p>
+            <p>Product Dis Price: {user.product.productDiscountPrice}</p>
+        </div>
+        )
+    })
+    }
+    
   </div>
 </div>
         </div>
