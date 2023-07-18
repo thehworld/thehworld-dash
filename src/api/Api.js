@@ -121,6 +121,19 @@ export const createCategory = (cate) => {
         })
 }
 
+export const deleteCategory = (cate) => {
+    console.log("cate - ", cate);
+    return axios.post(`${API_USE}/delete/category`, {
+            cate
+        })
+        .then((res) => {
+            return res.data.category
+        })
+        .catch((err) => {
+            return err
+        });
+}
+
 export const updateCategory = (cate) => {
     return axios.put(`${API_USE}/edit/category`, cate)
         .then((res) => {

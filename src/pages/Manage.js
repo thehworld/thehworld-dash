@@ -33,6 +33,10 @@ export default function Manage() {
   const [images, setImages] = useState({});
 
 
+
+  
+
+
   return (
     <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
     <Tabs

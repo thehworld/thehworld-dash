@@ -20,7 +20,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { createCategory, getAllCategory, updateCategory } from '../../api/Api';
+import { createCategory, deleteCategory, getAllCategory, updateCategory } from '../../api/Api';
 
 
 function Category() {
@@ -114,11 +114,17 @@ function Category() {
     
   };
 
-  const onDelete = (index) => {
-      const updatedTableData = [...categoryTable];
-      updatedTableData.splice(index, 1);
-      setCategoryTable(updatedTableData);
-      setOpen(false)
+  const onDelete = (e, data) => {
+    e.preventDefault();
+    console.log(data._id);
+    deleteCategory(data._id)
+    .then((res) => {
+      console.log(res);
+      setIsSuccess(true)
+    }).catch((err) => {
+        console.log("Error - ", err);
+    })
+
   }
 
 
@@ -252,6 +258,7 @@ function Category() {
                         </TableCell>
                         <TableCell >{data.categoryDescription}</TableCell>
                         <Button color="primary" onClick={(e) => onEdit(e, data)} style={{marginTop: "8px"}}>Edit</Button>
+                        <Button color="danger" onClick={(e) => onDelete(e, data)} style={{marginTop: "8px", marginLeft:5}}>Delete</Button>
                         <Dialog
                           fullScreen={fullScreen}
                           open={open}
