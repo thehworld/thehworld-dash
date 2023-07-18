@@ -10,12 +10,15 @@ const UserDetails = () => {
 
     const [aUserDetails, setaUserDetails] = useState("");
     const [userOrdersList, setuserOrdersList] = useState([]);
-
+    const [userOrderDetails, setuserOrderDetails] = useState([])
     const getaUserDetails = () => {
         getAUser(userId).then((res) => {
             console.log("User Info - ", res)
             setaUserDetails(res.data.user);
             setuserOrdersList(res.data.user.userOrders);
+            if(res.data.orders){
+                    setuserOrderDetails(res.data.orders);
+            }
         }).catch((err) => {
             console.log("Error - ", err);
         })  
@@ -64,17 +67,30 @@ const UserDetails = () => {
     textAlign: 'center'
   }}>
     <h3>Orders:</h3>
-    {aUserDetails.userCart && aUserDetails.userCart.map((user, index) => {
+   
+    {userOrderDetails && userOrderDetails.map((order, index) => {
         return( 
         <div>
-            <h4>Name: {user.product.productName}</h4>
-            <p>Product Name: {user.product.productName}</p>
-            <p>Product Price: {user.product.productPrice}</p>
-            <p>Product Dis Price: {user.product.productDiscountPrice}</p>
+            <h4>Name: {order.orderId}</h4>
+            <p>Product Name: {order.paymentMethod}</p>
+            <p>Order Total: {order.orderTotal}</p>
+            <p>Product Dis Price: {order.paymentTotal}</p>
+            {order.paymentResponse ? (
+                <div>
+                    <p>
+                        {order.paymentResponse.code}
+                    </p>
+                </div>   
+            ) : (
+                null
+            )
+
+            }
         </div>
         )
     })
     }
+ 
     
   </div>
   <div class="user-orders" style={{

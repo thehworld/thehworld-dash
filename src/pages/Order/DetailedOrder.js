@@ -10,11 +10,12 @@ const DetailedOrder = () => {
     const {orderId} = useParams();
 
     const [orderDetail, setorderDetail] = useState({});
-
+    const [userDetails, setuserDetails] = useState("");
     const getAOrderDetailsHere = () => {
         getAOrderDetails(orderId).then((res) => {
-            console.log("Order Detail - ", res.data.order);
+            console.log("Order Detail - ", res.data);
             setorderDetail(res.data.order);
+            setuserDetails(res.data.user);
         }).catch((error) => {
             console.log("Error - ", error);
         })
@@ -68,6 +69,21 @@ const DetailedOrder = () => {
             ) 
 
             }
+            <div>
+                User Details
+                {userDetails ? (
+                    <div>
+                    {userDetails.userGoogleName}
+
+                    </div>    
+                ) : (
+                    <div>
+                        <p>
+                            Loading . . . . . .
+                        </p>
+                    </div>
+                )}
+             </div>   
         </div>
     )
 
