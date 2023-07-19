@@ -77,8 +77,6 @@ function Products() {
     const uploadTask = uploadBytesResumable(storageRef, file);
 
 
-    let imageURLList = [];
-    
 
     uploadTask.on('state_changed', 
       (snapshot) => {
@@ -101,12 +99,7 @@ function Products() {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log('File available at', downloadURL);
     
-          setfileUploadURL(downloadURL);
-          if(fileUploadURL.length > 0){
-            imageURLList = fileUploadURL;
-            imageURLList.push(fileUploadURL);
-            setfileUploadURL(imageURLList);
-        }
+            setfileUploadURL(downloadURL);
           setisLoading(false)
         });
       }
@@ -147,12 +140,12 @@ function Products() {
       .catch((error) => console.error(error));
   };
 
-  const [getAllProducts, setGetAllProducts] = useState([]);
+  const [getAllProductsHere, setGetAllProductsHere] = useState([]);
 
   const getAllProductsHandler = () => {
     getAllProducts()
     .then((res) => {
-      setGetAllProducts(res)
+      setGetAllProductsHere(res)
     })
   }
 
@@ -162,7 +155,7 @@ function Products() {
         setIsSuccess(false)
       }, 3000);
     }
-    // getAllProductsHandler()
+    getAllProductsHandler()
   }, [isSuccess])
   
 
@@ -187,17 +180,17 @@ function Products() {
       if(res){
         setIsSuccess(true)
       }
-      setProductName("")
-      setProductCategory("")
-      setPrice("")
-      setDiscount("")
-      setProductDes("")
-      setProductIngredients("")
-      setProductDetails("")
-      setStock("")
-      setImages([]);
-      setUsage("")
-      setBenifits("")
+      // setProductName("")
+      // setProductCategory("")
+      // setPrice("")
+      // setDiscount("")
+      // setProductDes("")
+      // setProductIngredients("")
+      // setProductDetails("")
+      // setStock("")
+      // setImages([]);
+      // setUsage("")
+      // setBenifits("")
 
       console.log("product created", res)
     })
@@ -221,6 +214,18 @@ function Products() {
       setGetAllCategories(res)
     })
   }
+
+  // const getAllProductHandle = () => {
+  //   getAllProducts()
+  //   .then((res) => {
+  //     console.log("all product - ", res);
+
+  //   }).catch((err) => {
+  //     console.log("Error- ", err);
+  //   })
+  // }
+
+
   useEffect(() => {
     if(isCateSuccess){
       setTimeout(() => {
@@ -330,15 +335,13 @@ function Products() {
               {/* Image previews */}
               <div>
                 <h3>Image Previews:</h3>
-                {fileUploadURL.map((imageUrl, index) => (
+                {/* {fileUploadURL.length > 0 && fileUploadURL.map((imageUrl, index) => ( */}
                   <img
-                    key={index}
-                    src={imageUrl}
-                    alt={`Image ${index + 1}`}
+                    src={fileUploadURL}
                     width="100"
                     height="100"
                   />
-                ))}
+                
               </div>
             <FormGroup>
               <Label for="exampleText">How to use</Label>
@@ -379,7 +382,7 @@ function Products() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {getAllProducts && getAllProducts.map((data, index) => (
+                    {getAllProductsHere.length > 0 && getAllProductsHere.map((data, index) => (
                       <TableRow
                         key={index}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -388,13 +391,13 @@ function Products() {
                           {data.productName}
                         </TableCell>
                         <TableCell >
-                        <div className="productimg-manage-grid">
+                        {/* <div className="productimg-manage-grid">
                           {data.images.map((imageUrl, index) => (
                             <div key={index} >
                               <img src={imageUrl} className="productimg-manage" alt={`Image ${index + 1}`} />
                             </div>
                           ))}
-                        </div>
+                        </div> */}
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {data.productCategory}

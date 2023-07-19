@@ -159,7 +159,7 @@ export const createProduct = (prod) => {
 export const getAllProducts = (prod) => {
     return axios.get(`${API_USE}/get/all/products`, prod)
         .then((res) => {
-            return res.data.product
+            return res.data.products
         })
         .catch((err) => {
             return err
