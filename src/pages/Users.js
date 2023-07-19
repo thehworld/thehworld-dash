@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Container } from '@mui/material';
+import { Card, CardContent, CardMedia, Container } from '@mui/material';
 import PropTypes from 'prop-types';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
@@ -37,17 +37,28 @@ export default function Users() {
 
   return (
     <div>
-        <div style={{ height: "80vh", width: '100%' }}>
+        <Container>
         <h3 style={{padding: "10px", textAlign: "center", marginTop: "20px"}} className="poppinsBold">USERS</h3>
         <div class="user-list">
         <div class="grid-container">
         {allUsers && allUsers.map((user, index) => {
         return(
-          <div className="grid-item" onClick={() => navigate(`/user/${user.userId}`)}>
-          <img src={user.userProfilePic} alt={user.userGoogleName}/>
-          <h3>Name: {user.userName}</h3>
-          <p>Phone: {user.contactNumber}</p>
-        </div>
+          <div>
+         <Card sx={{ display: 'flex' }} onClick={() => navigate(`/user/${user.userId}`)}>
+         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+           <CardContent style={{display: "flex", justifyContent: "center", alignItems: "flex-start", flexDirection: "column"}}>
+            <img src={user.userProfilePic} style={{borderRadius: "100px"}}/>
+             <Typography component="div" variant="h5">
+             Name: {user.userName}
+             </Typography>
+             <Typography variant="subtitle1" color="text.secondary" component="div">
+             Phone: {user.contactNumber}
+             </Typography>
+           </CardContent>
+           </Box>
+         
+       </Card>
+       </div>
        
         )
        })
@@ -56,8 +67,8 @@ export default function Users() {
 </div>
  
 </div>
- 
+</Container>
+
         </div>
-    </div>
   );
 }

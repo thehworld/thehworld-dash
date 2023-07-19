@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAUser } from "../../api/Api";
+import { Container } from "@mui/material";
 
 
 const UserDetails = () => {
@@ -35,7 +36,7 @@ const UserDetails = () => {
 
 
     return(
-        <div>
+        <Container>
             <p style={{
                 textAlign: 'center',
                 marginTop:50,
@@ -45,13 +46,16 @@ const UserDetails = () => {
                 User Details
             </p>
             <div class="user-preview" style={{
-                height: '100%',
-                backgroundColor: '#FFFFFF'
+                minHeight: '100vh',
+                backgroundColor: '#FFFFFF',
+                marginTop: "20px",
+                boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
             }}>
   <div class="user-info" style={{
-    textAlign: 'center'
+    textAlign: 'center',
+    padding: "20px"
   }}>
-    <img src={aUserDetails.userProfilePic} alt="User Photo"/>
+    <img src={aUserDetails.userProfilePic} style={{borderRadius: "100px"}} alt="User Photo"/>
     <h2>User Name {aUserDetails.userGoogleName}</h2>
     <p>Address: {aUserDetails.userEmail}</p>
     <p style={{
@@ -67,19 +71,18 @@ const UserDetails = () => {
     textAlign: 'center'
   }}>
     <h3>Orders:</h3>
-   
+   <div style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px", padding: "20px"}}>
     {userOrderDetails && userOrderDetails.map((order, index) => {
         return( 
-        <div>
-            <h4>Name: {order.orderId}</h4>
-            <p>Product Name: {order.paymentMethod}</p>
-            <p>Order Total: {order.orderTotal}</p>
-            <p>Product Dis Price: {order.paymentTotal}</p>
+        <div style={{boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px", padding: "20px", textAlign: "left"}}>
+            <h4>Order ID: {order.orderId}</h4>
+            <h5>Payment Method: {order.paymentMethod}</h5>
+            <h5>Order Total: {order.orderTotal}</h5>
             {order.paymentResponse ? (
                 <div>
-                    <p>
+                    <h5>
                         {order.paymentResponse.code}
-                    </p>
+                    </h5>
                 </div>   
             ) : (
                 null
@@ -90,6 +93,7 @@ const UserDetails = () => {
         )
     })
     }
+    </div>
  
     
   </div>
@@ -97,10 +101,10 @@ const UserDetails = () => {
     textAlign: 'center'
   }}>
     <h3>In Cart:</h3>
+    <div style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px", padding: "20px"}}>
     {aUserDetails.userCart && aUserDetails.userCart.map((user, index) => {
         return(
-        <div>
-            <h4>Name: {user.product.productName}</h4>
+        <div style={{boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px", padding: "20px", textAlign: "left"}}>
             <p>Product Name: {user.product.productName}</p>
             <p>Product Price: {user.product.productPrice}</p>
             <p>Product Dis Price: {user.product.productDiscountPrice}</p>
@@ -108,10 +112,11 @@ const UserDetails = () => {
         )
     })
     }
+    </div>
     
   </div>
 </div>
-        </div>
+        </Container>
     )    
 }
 

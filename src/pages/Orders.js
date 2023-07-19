@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Input, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, Container, Input, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
@@ -198,7 +198,7 @@ function Orders() {
         </Tabs>
       </Box>
       <Container>
-            <Input style={{borderRadius:"1rem"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
+            <Input style={{borderRadius:"1rem", marginTop: "20px"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
           </Container>
       <CustomTabPanel value={value} index={0}>
     
@@ -242,10 +242,10 @@ function Orders() {
                 </div>
                 {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
-              >
+                  style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  >
                   {order.paymentResponse.code === undefined ? (
-                    <p>
+                    <p style={{fontWeight: "bolder"}}>
                       Payment is not processed
                     </p>
                   ) : (
@@ -253,18 +253,21 @@ function Orders() {
                     )
   
                   }
-                    <p>
-                      Payment Status - {order.paymentResponse.code}
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
+                    <p style={{color: "#ffffff"}}>
+                      Payment Statuss - {order.paymentResponse.code}
                      </p> 
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
-                     </p> 
+                     </p>
+                     </div> 
                    </div> 
                 ) : (<p style={{
-                  color:"red"
+                  color:"red",
+                  fontWeight: "bolder",
                 }}>
                   Payment is not processed
                 </p>)
@@ -273,31 +276,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button color="success"  onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -362,6 +365,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -371,6 +375,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -382,31 +387,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -470,6 +475,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -479,6 +485,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -490,31 +497,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -578,6 +585,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -587,6 +595,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -598,31 +607,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -686,6 +695,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -695,6 +705,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -706,31 +717,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -793,6 +804,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -802,6 +814,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -813,31 +826,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
@@ -901,6 +914,7 @@ function Orders() {
                     )
   
                   }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
                     <p>
                       Payment Status - {order.paymentResponse.code}
                      </p> 
@@ -910,6 +924,7 @@ function Orders() {
                     <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                     </div>
                    </div> 
                 ) : (<p style={{
                   color:"red"
@@ -921,31 +936,31 @@ function Orders() {
                 <div>
                   User WhatsApp Order Automation - {order.orderUpdateWAPhone}
                 </div>
-                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
-                </button>
-                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
-                </button>
+                </Button>
               </div>
               </div>
            
