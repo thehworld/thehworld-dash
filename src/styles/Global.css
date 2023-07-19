@@ -140,7 +140,7 @@
 }
 .order-cont{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 30px;
     gap: 20px;
 }

@@ -5,7 +5,7 @@ const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
 const API_DEV = "http://localhost:8080/api/web"
 
-const API_USE = API;
+const API_USE = API_DEV;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
@@ -58,8 +58,19 @@ export const getAUsersOrders = (userID) => {
     });
 }
 
-export const changrOrderStatus = (status) => {
+export const getChangeOrderStatus = (status) => {
     return axios.post(`${API_USE}/change/order/status`, {
+        status: status
+    }).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
+
+export const changeOrderStatus = (status) => {
+    console.log(status);
+    return axios.post(`${API_USE}/order/change/shipment`, {
         status: status
     }).then((res) => {
         return res
@@ -80,7 +91,13 @@ export const getAllUsers = () => {
 }
 
 
-
+export const getAUser = (userId) => {
+    return axios.get(`${API_USE}/get/a/user/${userId}`).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
 
 
 export const getAllCategory = () => {
@@ -102,6 +119,19 @@ export const createCategory = (cate) => {
         .catch((err) => {
             return err
         })
+}
+
+export const deleteCategory = (cate) => {
+    console.log("cate - ", cate);
+    return axios.post(`${API_USE}/delete/category`, {
+            cate
+        })
+        .then((res) => {
+            return res.data.category
+        })
+        .catch((err) => {
+            return err
+        });
 }
 
 export const updateCategory = (cate) => {
@@ -129,7 +159,7 @@ export const createProduct = (prod) => {
 export const getAllProducts = (prod) => {
     return axios.get(`${API_USE}/get/all/products`, prod)
         .then((res) => {
-            return res.data.product
+            return res.data.products
         })
         .catch((err) => {
             return err

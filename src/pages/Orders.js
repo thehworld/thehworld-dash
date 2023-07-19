@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Container, Input, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { getAllUsersOrders } from "../api/Api";
+import { changeOrderStatus, getAllUsersOrders, getChangeOrderStatus } from "../api/Api";
 import { useNavigate } from "react-router-dom";
 
 const options = [
-  'Edit',
-  'Delete',
-  'raise query',
+  'Open'
 ];
 
 const ITEM_HEIGHT = 48;
@@ -21,7 +19,7 @@ const ITEM_HEIGHT = 48;
 
 
 
-const LongMenu = () => {
+const LongMenu = ({navigate, id}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -63,7 +61,7 @@ const LongMenu = () => {
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+          <MenuItem  key={option} selected={option === 'Pyxis'} onClick={handleClose}>
             {option}
           </MenuItem>
         ))}
@@ -71,15 +69,17 @@ const LongMenu = () => {
     </div>
   );
 }
-function TabPanel(props) {
+
+
+function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -91,7 +91,7 @@ function TabPanel(props) {
   );
 }
 
-TabPanel.propTypes = {
+CustomTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
@@ -99,19 +99,20 @@ TabPanel.propTypes = {
 
 function a11yProps(index) {
   return {
-    id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-
 
 
 
 function Orders() {
   const [value, setValue] = React.useState(0);
   const [allOrders, setallOrders] = useState([])
-
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate= useNavigate();
+  const [isLoading, setisLoading] = useState(false);
+
 
   const getAllOrders = () => {
       getAllUsersOrders().then((res) => {
@@ -122,228 +123,840 @@ function Orders() {
       })
   }
   
-  useEffect(() => {
-      getAllOrders();
-  }, []);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const isLoadingSection = () => {
+    if(isLoading){
+      return(
+        <div className="loading">
+          <div></div>
+          <div></div>
+        </div> 
+      )
+    }
+  }
 
 
   const [orderStatusChecker, setorderStatusChecker] = useState(false)
 
+  const [orderGetStatus, setOrderGetStatus] = useState("NEW");
+
   const orderStatus = (e, status) => {
     e.preventDefault();
+    getChangeOrderStatus({status}).then((res) => {
+      console.log("Order Status - ", res);
+      // if(res.data.order[0].orderUpdateWAPhone){
+      //   // Regex expression to remove all characters which are NOT alphanumeric 
+      // let number = res.data.order[0].orderUpdateWAPhone.replace(/[^\w\s]/gi, "").replace(/ /g, "");
 
+      // // Appending the phone number to the URL
+      //   let url = `https://web.whatsapp.com/send?phone=${number}`;
+  
+      // // Appending the message to the URL by encoding it
+      //   let message = `Your Order Status ${res.data.order[0].orderUpdateWAPhone.orderId}`
+      //   url += `&text=${encodeURI(message)}&app_absent=0`;
+  
+      // // Open our newly created URL in a new tab to send the message
+      //   window.open(url); 
+      // }
+    }).catch((err) => {
+      console.log("Error - ", err);
+    });
 
   }
 
+
+  const orderStatusChange = (e, status, id) => {
+    e.preventDefault();
+    changeOrderStatus({status, id}).then((res) => {
+      console.log(res);
+      if(res.data.order){
+        setorderStatusChecker(!orderStatusChecker);
+      }
+    }).catch((err) => {
+      console.log("Error - ", err);
+    })
+  }
+
+
+  useEffect(() => {
+    getAllOrders();
+}, [orderStatusChecker]);
+
+
   return(
     <Container>
-      <Box
-      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 450 }}
-    >
-      <Tabs
-        orientation="horizontal"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider' }}
-      >
-        <Tab label="All Orders" {...a11yProps(0)} />
-        <Tab label="New Orders" {...a11yProps(1)} />
-        <Tab label="Packed" {...a11yProps(2)} />
-        <Tab label="In Transit" {...a11yProps(3)} />
-        <Tab label="Shipped" {...a11yProps(4)} />
-        <Tab label="Delivery waiting" {...a11yProps(5)} />
-        <Tab label="Delivered" {...a11yProps(6)} />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-      <div className="order-cont" style={{
-       
-      }}>
-        
-        {allOrders.length > 0 && allOrders.map((order, index) => {
-          return(
-            <div className="order-card" onClick={() => navigate(`/order/${order._id}`)}>
-              <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-              <div style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
-              <LongMenu />
-              </div>
-              <p>order id: {order._id}</p>
-              <p>order status: {order.paymentStatus}</p>
-              <p>received date&time: {order.createdAt}</p>
-              <p>pincode: {order.shipmentPincode}</p>
-              {order.orderProduct.length && order.orderProduct.map((prod, index) => {
-                return(
-                  <>
-                            <p>item item: {prod.product.productName}</p>
-                            <p>item qty: {prod.qty}</p>
-                            <p>item price: {prod.product.productPrice}</p>
-                            <p>item discount price: {prod.product.productDiscountPrice}</p>
-                  </>
-                )
-              })
-              }
-            <div>
-              Order Payment - 
-              <div>
-              <p>Order Total - <b>{order.orderTotal}</b></p> 
-              </div>
-              {order.paymentResponse ? (
-                <div>
-                  <p>
-                    Payment Status - {order.paymentResponse.code}
-                   </p> 
-                  <p>
-                    Payment Data - {order.paymentResponse.data.amount / 100}
-                   </p> 
-                  <p>
-                    Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
-                   </p> 
-                 </div> 
-              ) : (null)
-
-              }
-              <div>
-                User WhatsApp Order Automation - {order.orderUpdateWAPhone}
-              </div>
-              <button onClick={(e) => orderStatus(e, "Accept")} style={{
-                margin:5
-              }}>
-                Accept
-              </button>
-              <button onClick={(e) => orderStatus(e, "Packed")} style={{
-                margin:5
-              }}>
-              Packed
-              </button>
-              <button onClick={(e) => orderStatus(e, "Dispatched")} style={{
-                margin:5
-              }}>
-              Dispatched
-              </button>
-              <button onClick={(e) => orderStatus(e, "In Transit")} style={{
-                margin:5
-              }}>
-              In Transit
-              </button>
-              <button onClick={(e) => orderStatus(e, "Delivered")} style={{
-                margin:5
-              }}>
-                Delivered
-              </button>
-            </div>
-            </div>
-         
-          )
-        })
+     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="NEW" {...a11yProps(1)} onClick={(e) => orderStatus(e,"NEW")}/>
+          <Tab label="ACCEPTED" {...a11yProps(2)} onClick={(e) => orderStatus(e,"ACCEPTED")}/>
+          <Tab label="DISPATCHED" {...a11yProps(3)} onClick={(e) => orderStatus(e,"DISPATCHED")}/>
+          <Tab label="SHIPPED" {...a11yProps(4)} onClick={(e) => orderStatus(e,"SHIPPED")}/>
+          <Tab label="OUTFORDELIVERY" {...a11yProps(5)} onClick={(e) => orderStatus(e,"OUTFORDELIVERY")}/>
+          <Tab label="DELIVERED" {...a11yProps(6)} onClick={(e) => orderStatus(e,"DELIVERED")}/>
+        </Tabs>
+      </Box>
+      <Container>
+            <Input style={{borderRadius:"1rem"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
+          </Container>
+      <CustomTabPanel value={value} index={0}>
+    
+          <div className="order-cont">
           
-        }
-        
-       </div>
-        
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "" && order.orderStatus === "NEW") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) && order.orderStatus === "NEW") {
+                  return order
+                }
+              }).map((order, index) => {
+  
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+          
        
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <p>order id: 5852144</p>
-            <p>order status: packing</p>
-            <p>received date&time: 11/2/23, 15:43</p>
-            <p>pincode: 641060</p>
-            <p>ordered item: (1)hair gel, (2)hair oil</p>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        <div className="order-cont">
-          <div className="order-card">
-            <div style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-            <div style={{backgroundColor:"#548456", height: "7px", width: "30px", borderRadius: "20px"}} />
-            <LongMenu />
-            </div>
-            <h4>order id: 5852144</h4>
-            <h5>order status: packing</h5>
-            <h5>received date&time: 11/2/23, 15:43</h5>
-            <h5>pincode: 641060</h5>
-            <h5>ordered item: (1)hair gel, (2)hair oil</h5>
-            <p>order query: none</p>
-          </div>
-        </div>
-      </TabPanel>
-    </Box>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "ACCEPTED")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+          
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "DISPATCHED")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+          
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "SHIPPED")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+         
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "SHIPPED")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={5}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "OUTFORDELIVERY")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+          
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
+      <div className="order-cont">
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            if(order.orderStatus === "DELIVERED")
+            return(
+              <div className="order-card"  
+              >
+                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
+                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
+                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
+                </div>
+                <p>order id: {order._id}</p>
+                <p>order status: {order.paymentStatus}</p>
+                <p>received date&time: {order.createdAt}</p>
+                <p>pincode: {order.shipmentPincode}</p>
+                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item item: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              <div>
+                Order Payment - 
+                <div>
+                <p>Order Total - <b>{order.orderTotal}</b></p> 
+                </div>
+                {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+                <div>
+                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
+                </div>
+                <button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </button>
+                <button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </button>
+              </div>
+              </div>
+           
+            )
+          })
+            
+          }
+          
+         </div>
+          
+      </CustomTabPanel>
     </Container>
   )
 }
