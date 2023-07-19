@@ -32,6 +32,7 @@ import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 import { realDB } from './lib/initFirebase';
 import 'firebase/database';
 import 'firebase/storage';
+import { Select } from '@mui/material';
 
 function Products() {
 
@@ -54,7 +55,9 @@ function Products() {
   // Image Uploads Here
 
   const [fileHere, setfileHere] = useState('');
+  const [fileHere2, setfileHere2] = useState('');
   const [fileUploadURL, setfileUploadURL] = useState([]);
+  const [fileUploadURL2, setfileUploadURL2] = useState([]);
   const [isLoading, setisLoading] = useState(false);
  
   const loadingHere = () => {
@@ -106,6 +109,44 @@ function Products() {
     )
 
 }
+  const submitImage2 = (e) => {
+    e.preventDefault();
+    let file = fileHere2;
+    setisLoading(true)
+    const storage = getStorage();
+    const storageRef = sRef(storage, "user_uploads" + file.name)
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+
+
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
+      }, 
+      (error) => {
+      }, 
+      () => {
+
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+    
+            setfileUploadURL2(downloadURL);
+          setisLoading(false)
+        });
+      }
+    )
+
+}
 
   // 
 
@@ -145,6 +186,7 @@ function Products() {
   const getAllProductsHandler = () => {
     getAllProducts()
     .then((res) => {
+      console.log("Get All Products - ", res);
       setGetAllProductsHere(res)
     })
   }
@@ -172,7 +214,7 @@ function Products() {
       productIngredient: productIngredients,
       productDetails: productDetails,
       stock: stock,
-      productImages: fileUploadURL,
+      productImages: [fileUploadURL, fileUploadURL2],
       howTo: usage,
       benifitsSkinType: benifits
     })
@@ -180,17 +222,17 @@ function Products() {
       if(res){
         setIsSuccess(true)
       }
-      // setProductName("")
-      // setProductCategory("")
-      // setPrice("")
-      // setDiscount("")
-      // setProductDes("")
-      // setProductIngredients("")
-      // setProductDetails("")
-      // setStock("")
-      // setImages([]);
-      // setUsage("")
-      // setBenifits("")
+      setProductName("")
+      setProductCategory("")
+      setPrice("")
+      setDiscount("")
+      setProductDes("")
+      setProductIngredients("")
+      setProductDetails("")
+      setStock("")
+      setImages([]);
+      setUsage("")
+      setBenifits("")
 
       console.log("product created", res)
     })
@@ -203,6 +245,10 @@ function Products() {
   const onFileInputChange = (event) => {
     const { files } = event.target;
     setfileHere(event.target.files[0])
+  }
+  const onFileInputChange2 = (event) => {
+    const { files } = event.target;
+    setfileHere2(event.target.files[0])
   }
 
   const [getAllCategories, setGetAllCategories] = useState([])
@@ -295,11 +341,11 @@ function Products() {
             </FormGroup>
             <FormGroup>
               <Label for="exampleSelect">Product Category</Label>
-              <Input type="select" name="productCategory" id="exampleSelect" value={productCategory} onChange={(e) => setProductCategory(e.target.value)}>
+              <Select type="select" name="productCategory" id="exampleSelect" value={productCategory} onChange={(e) => setProductCategory(e.target.value)}>
                 {getAllCategories && getAllCategories.map((data, index) => (
                   <option value={data._id} key={index}>{data.categoryName}</option>
                 ))}
-              </Input>
+              </Select>
             </FormGroup>
             <FormGroup>
               <Label for="exampleText">Price</Label>
@@ -332,12 +378,28 @@ function Products() {
               <button type="button" class="btn btn-primary" onClick={(e) => submitImage(e)}>Upload</button>
             </FormGroup>
            
+            <FormGroup>
+              <Label for="exampleText">images 2</Label>
+              <Input className="form-control form-control-lg" id="formFileLg" type="file" onChange={onFileInputChange2} />
+              <button type="button" class="btn btn-primary" onClick={(e) => submitImage2(e)}>Upload</button>
+            </FormGroup>
+           
               {/* Image previews */}
               <div>
                 <h3>Image Previews:</h3>
                 {/* {fileUploadURL.length > 0 && fileUploadURL.map((imageUrl, index) => ( */}
                   <img
                     src={fileUploadURL}
+                    width="100"
+                    height="100"
+                  />
+                
+              </div>
+              <div>
+                <h3>Image Previews 2:</h3>
+                {/* {fileUploadURL.length > 0 && fileUploadURL.map((imageUrl, index) => ( */}
+                  <img
+                    src={fileUploadURL2}
                     width="100"
                     height="100"
                   />
@@ -403,16 +465,16 @@ function Products() {
                           {data.productCategory}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          {data.price}
+                          {data.productPrice}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          {data.discount}
+                          {data.productDiscountPrice}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          {data.productDes}
+                          {data.productDescription}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          {data.productIngredients}
+                          {data.productIngredient[0]}
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {data.productDetails}
@@ -426,8 +488,15 @@ function Products() {
                         <TableCell component="th" scope="row">
                           {data.benifits}
                         </TableCell>
-                        <Button>
+                        <Button style={{
+                          marginTop:15
+                        }}>
                           Edit
+                        </Button>
+                        <Button style={{
+                          marginTop:15
+                        }}>
+                          Delete
                         </Button>
                       </TableRow>
                     ))}
