@@ -189,12 +189,12 @@ function Orders() {
     <Container>
      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="NEW" {...a11yProps(1)} onClick={(e) => orderStatus(e,"NEW")}/>
-          <Tab label="ACCEPTED" {...a11yProps(2)} onClick={(e) => orderStatus(e,"ACCEPTED")}/>
-          <Tab label="DISPATCHED" {...a11yProps(3)} onClick={(e) => orderStatus(e,"DISPATCHED")}/>
-          <Tab label="SHIPPED" {...a11yProps(4)} onClick={(e) => orderStatus(e,"SHIPPED")}/>
-          <Tab label="OUTFORDELIVERY" {...a11yProps(5)} onClick={(e) => orderStatus(e,"OUTFORDELIVERY")}/>
-          <Tab label="DELIVERED" {...a11yProps(6)} onClick={(e) => orderStatus(e,"DELIVERED")}/>
+          <Tab label="NEW" {...a11yProps(1)} />
+          <Tab label="ACCEPTED" {...a11yProps(2)} />
+          <Tab label="DISPATCHED" {...a11yProps(3)} />
+          <Tab label="SHIPPED" {...a11yProps(4)}/>
+          <Tab label="OUT FOR DELIVERY" {...a11yProps(5)}/>
+          <Tab label="DELIVERED" {...a11yProps(6)}/>
         </Tabs>
       </Box>
       <Container>
@@ -654,7 +654,7 @@ function Orders() {
                   return order
                 }
               }).map((order, index) => {
-            if(order.orderStatus === "SHIPPED")
+            if(order.orderStatus === "OUTFORDELIVERY")
             return(
               <div className="order-card"  
               >
@@ -755,7 +755,7 @@ function Orders() {
       <CustomTabPanel value={value} index={5}>
       <div className="order-cont">
           
-          {isLoadingSection()}
+      {isLoadingSection()}
               {allOrders && allOrders.filter((order) => {
                 if (searchTerm == "") {
                   return allOrders
@@ -763,116 +763,7 @@ function Orders() {
                   return order
                 }
               }).map((order, index) => {
-            if(order.orderStatus === "OUTFORDELIVERY")
-            return(
-              <div className="order-card"  
-              >
-                <div onClick={() => navigate(`/order/${order._id}`)} style={{display: "grid", justifyContent: "center", gap: "65%", gridTemplateColumns: "1fr 1fr", alignItems: "center", width: "100%"}}>
-                <div  style={{backgroundColor:"#548456", height: "7px", width: "80px", borderRadius: "20px"}} />
-                <LongMenu onClick={() => navigate(`/order/${order._id}`)} navigate={navigate} id={order._id}/>
-                </div>
-                <p>order id: {order._id}</p>
-                <p>order status: {order.paymentStatus}</p>
-                <p>received date&time: {order.createdAt}</p>
-                <p>pincode: {order.shipmentPincode}</p>
-                {order.orderProduct.length && order.orderProduct.map((prod, index) => {
-                  return(
-                    <>
-                              <p>item item: {prod.product.productName}</p>
-                              <p>item qty: {prod.qty}</p>
-                              <p>item price: {prod.product.productPrice}</p>
-                              <p>item discount price: {prod.product.productDiscountPrice}</p>
-                    </>
-                  )
-                })
-                }
-              <div>
-                Order Payment - 
-                <div>
-                <p>Order Total - <b>{order.orderTotal}</b></p> 
-                </div>
-                {order.paymentResponse ? (
-                  <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
-              >
-                  {order.paymentResponse.code === undefined ? (
-                    <p>
-                      Payment is not processed
-                    </p>
-                  ) : (
-                      null
-                    )
-  
-                  }
-                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
-                    <p>
-                      Payment Status - {order.paymentResponse.code}
-                     </p> 
-                    <p>
-                      Payment Data - {order.paymentResponse.data.amount / 100}
-                     </p> 
-                    <p>
-                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
-                     </p> 
-                     </div>
-                   </div> 
-                ) : (<p style={{
-                  color:"red"
-                }}>
-                  Payment is not processed
-                </p>)
-  
-                }
-                <div>
-                  User WhatsApp Order Automation - {order.orderUpdateWAPhone}
-                </div>
-                <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
-                  margin:5
-                }}>
-                  Accept
-                </Button>
-                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
-                  margin:5
-                }}>
-                Dispatched
-                </Button>
-                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
-                  margin:5
-                }}>
-                Shipped
-                </Button>
-                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
-                  margin:5
-                }}>
-                Out For Delivery
-                </Button>
-                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
-                  margin:5
-                }}>
-                  Delivered
-                </Button>
-              </div>
-              </div>
-           
-            )
-          })
-            
-          }
-          
-         </div>
-          
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
-      <div className="order-cont">
-          
-          {isLoadingSection()}
-              {allOrders && allOrders.filter((order) => {
-                if (searchTerm == "") {
-                  return allOrders
-                } else if (order._id.includes(searchTerm) ) {
-                  return order
-                }
-              }).map((order, index) => {
+                console.log("5")
             if(order.orderStatus === "DELIVERED")
             return(
               <div className="order-card"  
@@ -972,6 +863,7 @@ function Orders() {
          </div>
           
       </CustomTabPanel>
+     
     </Container>
   )
 }

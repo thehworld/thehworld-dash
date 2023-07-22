@@ -155,6 +155,13 @@ export const createProduct = (prod) => {
         })
 }
 
+export const editProduct = (prod) => {
+    return axios.put(`${API_USE}/edit/product`, prod).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
 
 export const getAllProducts = (prod) => {
     return axios.get(`${API_USE}/get/all/products`, prod)
@@ -164,6 +171,14 @@ export const getAllProducts = (prod) => {
         .catch((err) => {
             return err
         })
+}
+
+export const getAProduct = (prod) => {
+    return axios.put(``, prod).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
 }
 
 //blogs api

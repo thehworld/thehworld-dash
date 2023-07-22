@@ -18,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { createProduct, getAllCategory, getAllProducts } from '../../api/Api';
+import { createProduct, editProduct, getAllCategory, getAllProducts } from '../../api/Api';
 import firebase from 'firebase/compat/app';
 import {
     getStorage,
@@ -282,6 +282,69 @@ function Products() {
   }, [isCateSuccess])
   
 
+  const [editThisProductStatus, seteditThisProductStatus] = useState(false);
+  const [productIdHEre, setproductIdHEre] = useState("");
+  const editThisProduct = (e, id) => {
+        seteditThisProductStatus(true);
+        setproductIdHEre(id);
+        e.preventDefault();
+        console.log("Here All Product - ", getAllProductsHere);
+        const editThisProduct = getAllProductsHere.filter((p) => p._id === id);
+        console.log("This Product Here - ", editThisProduct);
+        setProductName(editThisProduct[0].productName)
+        setProductCategory(editThisProduct[0].productCategory)
+        setPrice(editThisProduct[0].productPrice)
+        setDiscount(editThisProduct[0].productDiscountPrice)
+        setProductDes(editThisProduct[0].productDescription)
+        setProductIngredients(editThisProduct[0].productIngredient)
+        setProductDetails(editThisProduct[0].productDetails)
+        setStock(editThisProduct[0].stock)
+        // setImages([editThisProduct[0].productImages[0], editThisProduct[0].productImages[1]]);
+        setUsage(editThisProduct[0].productCategory)
+        setBenifits(editThisProduct[0].howTo)
+        setfileUploadURL(editThisProduct[0].productImages[0]);
+        setfileUploadURL2(editThisProduct[0].productImages[1]);
+  }
+
+  const handleEditSubmit = (e, id) => {
+    editProduct({
+      productId: productIdHEre,
+      productName: productName,
+      productCategory: productCategory,
+      productPrice: price,
+      productDiscountPrice: discount,
+      productDescription: productDes,
+      productIngredient: productIngredients,
+      productDetails: productDetails,
+      stock: stock,
+      productImages: [fileUploadURL, fileUploadURL2],
+      howTo: usage,
+      benifitsSkinType: benifits
+    })
+    .then((res) => {
+      if(res){
+        setIsSuccess(true)
+      }
+      setProductName("")
+      setProductCategory("")
+      setPrice("")
+      setDiscount("")
+      setProductDes("")
+      setProductIngredients("")
+      setProductDetails("")
+      setStock("")
+      setImages([]);
+      setUsage("")
+      setBenifits("")
+
+      console.log("product created", res)
+    })
+    .catch((err) => {
+      console.log("error creating product", err)
+    })
+    
+  }
+
 
 
   return (
@@ -337,7 +400,7 @@ function Products() {
             <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label for="exampleEmail">Product name</Label>
-              <Input type="text" name="productName"  id="exampleEmail" value={productName} onChange={(e) => setProductName(e.target.value)} />
+              <Input type="text" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} />
             </FormGroup>
             <FormGroup>
               <Label for="exampleSelect">Product Category</Label>
@@ -419,7 +482,13 @@ function Products() {
                 checked above provided details
               </Label>
             </FormGroup>
-            <Button onClick={(e) => handleSubmit(e)} style={{backgroundColor: "#4FB23A", border: "none", padding: "8px 40px", marginTop: "20px"}} type='submit'>Submit</Button>
+            {editThisProductStatus ? (
+            <Button onClick={(e) => handleEditSubmit(e)} style={{backgroundColor: "#4FB23A", border: "none", padding: "8px 40px", marginTop: "20px"}} type='submit'>Edit</Button>
+            ) : (
+              <Button onClick={(e) => handleSubmit(e)} style={{backgroundColor: "#4FB23A", border: "none", padding: "8px 40px", marginTop: "20px"}} type='submit'>Submit</Button>
+            )
+
+            }
           </Form>
         </div>
         </TabPanel>
@@ -490,7 +559,9 @@ function Products() {
                         </TableCell>
                         <Button style={{
                           marginTop:15
-                        }}>
+                        }}
+                        onClick={(e) => editThisProduct(e, data._id)}
+                        >
                           Edit
                         </Button>
                         <Button style={{
