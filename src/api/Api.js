@@ -5,7 +5,7 @@ const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
 const API_DEV = "http://localhost:8080/api/web"
 
-const API_USE = API;
+const API_USE = API_DEV;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
@@ -158,6 +158,14 @@ export const createProduct = (prod) => {
 export const editProduct = (prod) => {
     return axios.put(`${API_USE}/edit/product`, prod).then((res) => {
         return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
+
+export const deleteProduct = (prod) => {
+    return axios.delete(`${API_USE}/delete/product`, prod).then((res) => {
+        return res;
     }).catch((error) => {
         console.log("Error - ", error);
     });

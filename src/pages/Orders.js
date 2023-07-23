@@ -116,7 +116,7 @@ function Orders() {
 
   const getAllOrders = () => {
       getAllUsersOrders().then((res) => {
-          console.log("All Orders", res.data.orders);
+          console.log("All Orders", res.data);
           setallOrders(res.data.orders);
       }).catch((err) => {
         console.log("Error - ", err);
@@ -155,7 +155,7 @@ function Orders() {
   
       // // Appending the message to the URL by encoding it
       //   let message = `Your Order Status ${res.data.order[0].orderUpdateWAPhone.orderId}`
-      //   url += `&text=${encodeURI(message)}&app_absent=0`;
+      //   url += `https://web.whatsapp.com/send?phone=${number}&text=${encodeURI(message)}&app_absent=0`;
   
       // // Open our newly created URL in a new tab to send the message
       //   window.open(url); 
@@ -302,6 +302,16 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+              <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                   <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
+                  Update To Client
+                </Button>
               </div>
            
             )
@@ -413,6 +423,11 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+               <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
               </div>
            
             )
@@ -523,6 +538,11 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+              <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
               </div>
            
             )
@@ -633,6 +653,11 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+              <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
               </div>
            
             )
@@ -743,6 +768,11 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+              <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
               </div>
            
             )
@@ -853,6 +883,11 @@ function Orders() {
                   Delivered
                 </Button>
               </div>
+              <Button onClick={() => window.open(`https://web.whatsapp.com/send?phone=${order.orderUpdateWAPhone}&text=${encodeURI(`Hi - Order from The H World, *Status Update - *${order._id}* Status _${order.orderStatus}_`)}&app_absent=0`)} style={{
+                  margin:5
+                }}>
+                  Update To Client
+                </Button>
               </div>
            
             )

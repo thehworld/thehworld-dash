@@ -346,6 +346,11 @@ function Products() {
   }
 
 
+  const deleteProduct = (e) => {
+    e.preventDefault();
+  }
+
+
 
   return (
         <Tabs
