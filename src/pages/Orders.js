@@ -8,17 +8,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { changeOrderStatus, getAllUsersOrders, getChangeOrderStatus } from "../api/Api";
 import { useNavigate } from "react-router-dom";
 import { Button, Table } from "reactstrap";
+import moment from "moment/moment";
+
 
 const options = [
   'Open'
 ];
 
 const ITEM_HEIGHT = 48;
-
-
-
-
-
 
 const LongMenu = ({navigate, id}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -196,13 +193,14 @@ function Orders() {
           <Tab label="SHIPPED" {...a11yProps(4)}/>
           <Tab label="OUT FOR DELIVERY" {...a11yProps(5)}/>
           <Tab label="DELIVERED" {...a11yProps(6)}/>
+          <Tab label="ALL" {...a11yProps(7)}/>
         </Tabs>
       </Box>
       <div>
             <Input style={{borderRadius:"1rem", marginTop: "20px"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
           </div>
       <CustomTabPanel value={value} index={0}>
-    
+        
           <Table striped style={{overflow: "hidden"}} bordered>
           <thead style={{backgroundColor: "#9BA4B5"}}>
             <tr>
@@ -254,7 +252,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -263,7 +261,7 @@ function Orders() {
               {order.paymentStatus}
               </td>
               <td>
-              {order.createdAt}
+              {moment(order.createdAt).format("MMMM Do YYYY, h:mm a")}
               </td>
               <td>
               {order.shipmentPincode}
@@ -413,7 +411,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -573,7 +571,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -733,7 +731,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -892,7 +890,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -1052,7 +1050,7 @@ function Orders() {
             return(
               <tr>
               <th scope="row">
-                1
+              {index + 1}
               </th>
               <td>
               {order._id}
@@ -1158,6 +1156,165 @@ function Orders() {
           </tbody>
           </Table>
           
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
+      <Table striped style={{overflow: "hidden"}} bordered>
+          <thead style={{backgroundColor: "#9BA4B5"}}>
+            <tr>
+              <th>
+                #
+              </th>
+              <th>
+                Order id
+              </th>
+              <th>
+                Order Status
+              </th>
+              <th>
+               Rec date&time
+              </th>
+              <th>
+                Pincode
+              </th>
+              <th>
+                Order
+              </th>
+              <th>
+                Order Total
+              </th>
+              <th>
+                Payment
+              </th>
+              <th>
+                WA Automation no.
+              </th>
+              <th>
+                Change Status
+              </th>
+              <th>
+                more details
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          
+          {isLoadingSection()}
+              {allOrders && allOrders.filter((order) => {
+                if (searchTerm == "") {
+                  return allOrders
+                } else if (order._id.includes(searchTerm) ) {
+                  return order
+                }
+              }).map((order, index) => {
+            
+            return(
+              <tr>
+              <th scope="row">
+                {index + 1}
+              </th>
+              <td>
+              {order._id}
+              </td>
+              <td>
+              {order.paymentStatus}
+              </td>
+              <td>
+              {order.createdAt}
+              </td>
+              <td>
+              {order.shipmentPincode}
+              </td>
+              <td>
+              {order.orderProduct.length && order.orderProduct.map((prod, index) => {
+                  return(
+                    <>
+                              <p>item name: {prod.product.productName}</p>
+                              <p>item qty: {prod.qty}</p>
+                              <p>item price: {prod.product.productPrice}</p>
+                              <p>item discount price: {prod.product.productDiscountPrice}</p>
+                    </>
+                  )
+                })
+                }
+              </td>
+              <td>
+              {order.orderTotal}
+              </td>
+              <td>
+              {order.paymentResponse ? (
+                  <div 
+              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              >
+                  {order.paymentResponse.code === undefined ? (
+                    <p>
+                      Payment is not processed
+                    </p>
+                  ) : (
+                      null
+                    )
+  
+                  }
+                  <div style={{borderRadius: "5px", padding: "10px", color: "#ffffff"}}>
+                    <p>
+                      Payment Status - {order.paymentResponse.code}
+                     </p> 
+                    <p>
+                      Payment Data - {order.paymentResponse.data.amount / 100}
+                     </p> 
+                    <p>
+                      Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
+                     </p> 
+                     </div>
+                   </div> 
+                ) : (<p style={{
+                  color:"red"
+                }}>
+                  Payment is not processed
+                </p>)
+  
+                }
+              </td>
+              <td>
+                {order.orderUpdateWAPhone}
+              </td>
+              <td>
+              <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
+                  margin:5
+                }}>
+                Dispatched
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
+                  margin:5
+                }}>
+                Shipped
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
+                  margin:5
+                }}>
+                Out For Delivery
+                </Button>
+                <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
+                  margin:5
+                }}>
+                  Delivered
+                </Button>
+              </td>
+              <td>
+                <p onClick={() => navigate(`/order/${order._id}`)} style={{textDecoration: "underline", cursor: "pointer"}} >
+                  more
+                </p>
+              </td>
+            </tr>
+            )
+          })
+          }
+          </tbody>
+          </Table>
       </CustomTabPanel>
      
     </div>
