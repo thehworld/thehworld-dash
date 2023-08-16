@@ -144,20 +144,17 @@ function Orders() {
     e.preventDefault();
     getChangeOrderStatus({status}).then((res) => {
       console.log("Order Status - ", res);
-      // if(res.data.order[0].orderUpdateWAPhone){
-      //   // Regex expression to remove all characters which are NOT alphanumeric 
-      // let number = res.data.order[0].orderUpdateWAPhone.replace(/[^\w\s]/gi, "").replace(/ /g, "");
+      if(res.data.order[0].orderUpdateWAPhone){
+        // Regex expression to remove all characters which are NOT alphanumeric 
+      let number = res.data.order[0].orderUpdateWAPhone.replace(/[^\w\s]/gi, "").replace(/ /g, "");
 
-      // // Appending the phone number to the URL
-      //   let url = `https://web.whatsapp.com/send?phone=${number}`;
+      // Appending the phone number to the URL
   
-      // // Appending the message to the URL by encoding it
-      //   let message = `Your Order Status ${res.data.order[0].orderUpdateWAPhone.orderId}`
-      //   url += `https://web.whatsapp.com/send?phone=${number}&text=${encodeURI(message)}&app_absent=0`;
-  
-      // // Open our newly created URL in a new tab to send the message
-      //   window.open(url); 
-      // }
+      // Appending the message to the URL by encoding it
+        let message = `Your Order Status ${res.data.order[0].orderUpdateWAPhone.orderId}`
+        let url = `https://web.whatsapp.com/send?phone=${number}&text=${encodeURI(message)}`;
+        window.open(url); 
+      }
     }).catch((err) => {
       console.log("Error - ", err);
     });
@@ -183,6 +180,25 @@ function Orders() {
 }, [orderStatusChecker]);
 
 
+
+  const sendUserWhatAppOrderStatus = (e, status, orderDetails) => {
+      e.preventDefault();
+      console.log("Order Status - ", orderDetails);
+      let message = `\t\t\t\t THE H WORLD 🌿 \n\n Your Order Status ${orderDetails.orderId} has been updated 😊`;
+      let productString = [];
+      orderDetails.orderProduct.map((ord, index) => {
+          productString += `\n\n *SNo:* ${index + 1}\n *Product No:* ${ord.product.productId}\n *Product Name:* ${ord.product.productName} \n *Product Qty:* ${ord.qty}`
+      })
+      message+=productString;
+      let orderStatus = `\n\n\n - *Order Status - ${orderDetails.orderStatus}*`
+      message+=orderStatus;
+      let url = `https://web.whatsapp.com/send?phone=${orderDetails.orderUpdateWAPhone}&text=${encodeURI(message)}`;
+      window.open(url); 
+  }
+
+
+
+
   return(
     <div style={{padding: "0 40px"}}>
      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -199,7 +215,7 @@ function Orders() {
       <div>
             <Input style={{borderRadius:"1rem", marginTop: "20px"}} type="text" placeholder="Search Orders" onChange={event => {setSearchTerm(event.target.value)}} />
           </div>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel  value={value} index={0}>
         
           <Table striped style={{overflow: "hidden"}} bordered>
           <thead style={{backgroundColor: "#9BA4B5"}}>
@@ -251,7 +267,8 @@ function Orders() {
               }).map((order, index) => {
   
             return(
-              <tr>
+              <tr >
+              <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
@@ -286,7 +303,7 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+              style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -304,9 +321,18 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
+                    
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -320,17 +346,25 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
                   margin:5
                 }}>
                   Accept
                 </Button>
+              <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
+                </Button>
                 <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
                 </Button>
+                
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
@@ -405,6 +439,7 @@ function Orders() {
             if(order.orderStatus === "ACCEPTED")
             return(
               <tr>
+              <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
@@ -439,7 +474,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -457,9 +493,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -473,8 +517,14 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -483,6 +533,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
@@ -560,6 +616,7 @@ function Orders() {
             if(order.orderStatus === "DISPATCHED")
             return(
               <tr>
+                <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
@@ -594,7 +651,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -612,9 +670,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -628,8 +694,14 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -638,6 +710,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
@@ -716,6 +794,7 @@ function Orders() {
             if(order.orderStatus === "SHIPPED")
             return(
               <tr>
+                <div onClick={() => navigate(`/order/${order._id}`)}> 
               <th scope="row">
               {index + 1}
               </th>
@@ -750,7 +829,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -768,9 +848,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -784,8 +872,14 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -794,6 +888,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
@@ -871,6 +971,7 @@ function Orders() {
             if(order.orderStatus === "OUTFORDELIVERY")
             return(
               <tr>
+                <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
@@ -905,7 +1006,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -923,9 +1025,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -939,8 +1049,14 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -949,6 +1065,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
@@ -1027,6 +1149,7 @@ function Orders() {
             if(order.orderStatus === "DELIVERED")
             return(
               <tr>
+                <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
@@ -1061,7 +1184,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -1079,9 +1203,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -1095,8 +1227,14 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+              </div>
               <td>
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -1105,6 +1243,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
@@ -1183,6 +1327,7 @@ function Orders() {
             
             return(
               <tr>
+              <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
                 {index + 1}
               </th>
@@ -1217,7 +1362,8 @@ function Orders() {
               <td>
               {order.paymentResponse ? (
                   <div 
-              style={order.paymentResponse.code === "PAYMENT_SUCCESS" ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+
               >
                   {order.paymentResponse.code === undefined ? (
                     <p>
@@ -1235,9 +1381,17 @@ function Orders() {
                     <p>
                       Payment Data - {order.paymentResponse.data.amount / 100}
                      </p> 
-                    <p>
+                     {order.paymentResponse.data.paymentInstrument ? (
+                      <div>
+                      <p>
                       Payment Type - {order.paymentResponse.data.paymentInstrument.cardType}
                      </p> 
+                      </div>
+                     ) : (
+                      null
+                     )
+
+                     }
                      </div>
                    </div> 
                 ) : (<p style={{
@@ -1251,8 +1405,15 @@ function Orders() {
               <td>
                 {order.orderUpdateWAPhone}
               </td>
+                </div>
               <td>
+
               <Button onClick={(e) => orderStatusChange(e, "ACCEPTED", order._id)} style={{
+                  margin:5
+                }}>
+                  Accept
+                </Button>
+              <Button onClick={(e) => orderStatusChange(e, "UPDATE WA", order)} style={{
                   margin:5
                 }}>
                   Accept
@@ -1261,6 +1422,12 @@ function Orders() {
                   margin:5
                 }}>
                 Dispatched
+                </Button>
+                <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
+                  margin:5,
+                  backgroundColor:'#3407F8'
+                }}>
+                  UPDATE
                 </Button>
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5

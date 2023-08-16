@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAUser } from "../../api/Api";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 
 
 const UserDetails = () => {
@@ -32,6 +32,11 @@ const UserDetails = () => {
     },[])
 
     
+
+    const copy = async (text) => {
+        await navigator.clipboard.writeText(text);
+        alert('Text copied');
+      }
 
 
 
@@ -75,7 +80,7 @@ const UserDetails = () => {
     {userOrderDetails && userOrderDetails.map((order, index) => {
         return( 
         <div style={{boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px", padding: "20px", textAlign: "left"}}>
-            <h4>Order ID: {order.orderId}</h4>
+            <h4  onClick={() => copy(order._id)}>Order ID: {order._id}</h4>
             <h5>Payment Method: {order.paymentMethod}</h5>
             <h5>Order Total: {order.orderTotal}</h5>
             {order.paymentResponse ? (
@@ -115,6 +120,7 @@ const UserDetails = () => {
     </div>
     
   </div>
+    
 </div>
         </Container>
     )    

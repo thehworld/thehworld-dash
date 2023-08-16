@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom"
-import { getAOrderDetails } from "../../api/Api";
+import { checkOrderPayment, getAOrderDetails } from "../../api/Api";
 import { useEffect } from "react";
 import { useState } from "react";
-import { CircularProgress, Container } from "@mui/material";
+import { Button, CircularProgress, Container } from "@mui/material";
 
 const DetailedOrder = () => {
 
@@ -24,9 +24,35 @@ const DetailedOrder = () => {
         getAOrderDetailsHere()
     },[])
 
+
+    const [paymentStatusCode, setpaymentStatusCode] = useState("")
+    const checkOrderPaymentDetails = (e, id) => {
+        e.preventDefault();
+        checkOrderPayment(id).then((res) => {
+            console.log("Res - ", res);
+            console.log("Res Payment - ", res.data.paymentStatus);
+            if(res.data.paymentStatus.code === "PAYMENT_SUCCESS"){
+                setpaymentStatusCode(res.data.paymentStatus.code);
+            }
+        }).catch((err) => {
+            console.log("Error - ", err);
+        }) 
+
+    }
+
+
+
+    const initiatePaymentRefundHere = (e, id) => {
+        e.preventDefault(); 
+        
+    }
+
     return(
         <Container>
             <div style={{boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px", margintop: "20px", padding: "10px", minHeight: "100vh"}}>
+            <h2>
+                Payment - {paymentStatusCode}
+            </h2>
             <h3 style={{textAlign: "center"}}>
                 Details
             </h3>
@@ -100,7 +126,28 @@ const DetailedOrder = () => {
                 </div>
             ) 
             }
+            {
+                console.log("orderDetail.paymentResponse - ", orderDetail.paymentResponse)
+            }
+            {orderDetail.paymentResponse && (orderDetail.paymentResponse.code === "COD_SUCCESS" || orderDetail.paymentResponse.code === "PAYMENT_SUCCESS") ? (
+                   <div style={{
+                    textAlign: 'center',
+                    marginTop:10
+                }}>
+                       <Button variant="contained" onClick={(e) => checkOrderPaymentDetails(e, orderDetail.orderId)} style={{
+                        margin:10
+                       }}>Payment Status Check</Button>
+                       <Button variant="contained" onClick={(e) => initiatePaymentRefundHere(e, orderDetail.orderId)} style={{
+                        margin:10
+                       }}>Refund Payment</Button>
+            
+                </div>
+            ) : (null)
+
+            }
+          
              </div>
+          
         </Container>
     )
 

@@ -191,10 +191,10 @@ export const getAProduct = (prod) => {
 
 //blogs api
 
-export const getAllBlogs = (blog) => {
-    return axios.get(`${API_USE}/get/all/blogs`, blog)
+export const getAllBlogs = () => {
+    return axios.get(`${API_USE}/get/all/blogs`)
         .then((res) => {
-            return res.data.blogs
+            return res.data
         })
         .catch((err) => {
             return err
@@ -209,4 +209,47 @@ export const createBlog = (blog) => {
         .catch((err) => {
             return err
         })
+}
+
+// ? ----------- Order Details --------------------
+
+export const checkOrderPayment = (orderID) => {
+    return axios.post(`${API_USE}/check/a/payment`, {
+        orderID
+    }).then((res) => {
+        return res
+    }).catch((error) => {
+        console.log("Error - ", error);
+    });
+}
+
+
+export const dashboardStats = () => {
+    return axios.get(`${API_USE}/get/dash/stats`)
+        .then((res) => {
+            return res
+        })
+        .catch((error) => {
+            return error
+        });
+}
+
+
+export const makeStatusUpdateView = () => {
+    return axios.post(`${API_USE}/status/update`, { status: "View" })
+        .then((res) => {
+            return res;
+        }).catch((err) => {
+            console.log("Error - ", err);
+        });
+}
+
+
+export const deleteTheBlog = (blogID) => {
+    return axios.delete(`${API_USE}/blog/delete/${blogID}`)
+        .then((res) => {
+            return res
+        }).catch((err) => {
+            console.log("Error - ", err);
+        });
 }
