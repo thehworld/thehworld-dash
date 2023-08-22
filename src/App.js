@@ -34,7 +34,7 @@ export default function App() {
 
 
           {/* All Payment Details */}
-          <Route path="/payments" element={<Payment />} />
+          <Route path="/offers" element={<Payment />} />
         </Routes>
       </Router>
     </div>

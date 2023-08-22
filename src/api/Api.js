@@ -253,3 +253,25 @@ export const deleteTheBlog = (blogID) => {
             console.log("Error - ", err);
         });
 }
+
+
+
+// ** Offers
+
+export const createOfferCode = (offer) => {
+    return axios.post(`${API_USE}/create/offer/code`, offer)
+        .then((res) => {
+            return res;
+        }).catch((err) => {
+            console.log("Error - ", err);
+        });
+}
+
+export const getAllOffers = () => {
+    return axios.get(`${API_USE}/get/all/offers`)
+        .then((res) => {
+            return res;
+        }).catch((err) => {
+            console.log("Error - ", err);
+        });
+}
