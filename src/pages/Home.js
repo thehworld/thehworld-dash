@@ -67,7 +67,7 @@ export default function Home() {
                         <p>All Earnings</p>
                         <div className='db-card-grid'>
                             <FaMoneyCheckAlt size="80" color='#4FB23A' className="flex-cc" />
-                            <h1 className="flex-cc">{totalOrderValue}</h1>
+                            <h1 className="flex-cc">{totalOrderValue.toFixed(3)}</h1>
                         </div>
                     </div>
                 </div>
