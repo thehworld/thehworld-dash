@@ -11,6 +11,7 @@ import Manage from "./pages/Manage";
 import DetailedOrder from "./pages/Order/DetailedOrder";
 import Payment from "./pages/Payment/payment";
 import UserDetails from "./pages/User/UserDetails";
+import Support from "./pages/Support";
 
 
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
 
           {/* All Payment Details */}
           <Route path="/offers" element={<Payment />} />
+          <Route path="/support" element={<Support />} />
         </Routes>
       </Router>
     </div>

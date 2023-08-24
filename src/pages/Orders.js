@@ -305,7 +305,9 @@ function Orders() {
               <th scope="row">
               {index + 1}
               </th>
-              <td>
+              <td style={{
+                fontSize:12
+              }}> 
               {order._id}
               </td>
               <td>

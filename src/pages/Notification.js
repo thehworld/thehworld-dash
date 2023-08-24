@@ -3,7 +3,9 @@ import React from 'react'
 
 export default function Notification() {
   return (
-    <div>
+    <div style={{
+      margin:40
+    }}>
         <hr />
         <Alert severity="error">
             <AlertTitle>Error</AlertTitle>

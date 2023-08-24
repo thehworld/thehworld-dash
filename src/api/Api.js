@@ -275,3 +275,12 @@ export const getAllOffers = () => {
             console.log("Error - ", err);
         });
 }
+
+export const getAllOrderIssues = () => {
+    return axios.get(`${API_USE}/get/all/order/issues`)
+        .then((res) => {
+            return res;
+        }).catch((err) => {
+            console.log("Error - ", err);
+        });
+}
