@@ -204,7 +204,7 @@ function Orders() {
       message+=productString;
       let orderStatus = `\n\n\n - *Order Status - ${orderDetails.orderStatus}*`
       message+=orderStatus;
-      let url = `https://web.whatsapp.com/send?phone=${orderDetails.orderUpdateWAPhone}&text=${encodeURI(message)}`;
+      let url = `https://web.whatsapp.com/send?phone=+91${orderDetails.orderUpdateWAPhone}&text=${encodeURI(message)}`;
       window.open(url); 
   }
 
