@@ -473,7 +473,7 @@ function Orders() {
               </th>
             </tr>
           </thead>
-        </Table>
+      </Table>
           {isLoadingSection()}
               {allOrders && allOrders.filter((order) => {
                 if (searchTerm == "") {
@@ -484,19 +484,30 @@ function Orders() {
               }).map((order, index) => {
             if(order.orderStatus === "ACCEPTED")
             return(
+              <>  
               <tr>
               <div onClick={() => navigate(`/order/${order._id}`)}>
               <th scope="row">
               {index + 1}
               </th>
-              <td>
+              <td style={{
+                fontSize:12
+              }}> 
               {order._id}
               </td>
-              <td>
+              <td style={{
+                fontSize:20,
+                margin:10
+              }}>
               {order.paymentStatus}
               </td>
-              <td>
-              {order.createdAt}
+              <td style={{
+                fontSize:12,
+                marginRight:10,
+                marginLeft:10
+              }}>
+              {moment(order.createdAt).format("MMMM Do YYYY, h:mm a")}
+
               </td>
               <td>
               {order.shipmentPincode}
@@ -504,28 +515,55 @@ function Orders() {
               <td>
               {order.orderProduct.length && order.orderProduct.map((prod, index) => {
                   return(
-                    <>
-                              <p>item name: {prod.product.productName}</p>
-                              <p>item qty: {prod.qty}</p>
-                              <p>item price: {prod.product.productPrice}</p>
-                              <p>item discount price: {prod.product.productDiscountPrice}</p>
-                    </>
+                    <div style={{
+                      margin:15
+                    }}>
+                              <p>Item name: <b style={{
+                                color:'#0000007E',
+                                fontSize: 18
+                              }}>{prod.product.productName}</b></p>
+                              <hr></hr>
+                              <p>Item qty: <b style={{
+                                color:'#0000007E',
+                                fontSize: 18
+                              }}>{prod.qty}</b></p>
+                              <hr></hr>
+                              <p>Item price: <b style={{
+                                color:'#0000007E',
+                                fontSize: 18
+                              }}>{prod.product.productPrice}</b></p>
+                              <hr></hr>
+                              <p>Item discount price: <b style={{
+                                color:'#0000007E',
+                                fontSize: 18
+                              }}>{prod.product.productDiscountPrice}</b> </p>
+                    </div>
                   )
                 })
                 }
               </td>
-              <td>
+              <td style={{
+                margin:15
+              }}>
               {order.orderTotal}
               </td>
-              <td>
+              <td style={{
+                marginLeft:5,
+                marginRight:5
+              }}>
               {order.paymentResponse ? (
                   <div 
-                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green" }:{backgroundColor: "red" }}
+                  style={(order.paymentResponse.code === "PAYMENT_SUCCESS" || order.paymentResponse.code === "COD_SUCCESS") ? {backgroundColor:"green",
+                  marginRight:8,
+                  marginLeft:8,
+                  borderRadius:8 }:{backgroundColor: "red" }}
 
               >
                   {order.paymentResponse.code === undefined ? (
-                    <p>
-                      Payment is not processed
+                    <p style={{
+                      fontSize:18
+                    }}>
+                      <b>Payment is not processed</b>
                     </p>
                   ) : (
                       null
@@ -560,8 +598,13 @@ function Orders() {
   
                 }
               </td>
-              <td>
+              <td style={{
+                fontSize:20,
+                color: 'green'
+              }}>
+                <b>
                 {order.orderUpdateWAPhone}
+                </b>
               </td>
               </div>
               <td>
@@ -570,55 +613,70 @@ function Orders() {
                 }}>
                   Accept
                 </Button>
-            
+                <br></br>
                 <Button onClick={(e) => orderStatusChange(e, "DISPATCHED", order._id)} style={{
                   margin:5
                 }}>
                 Dispatched
                 </Button>
+                <br></br>
                 
                 <Button onClick={(e) => orderStatusChange(e, "SHIPPED", order._id)} style={{
                   margin:5
                 }}>
                 Shipped
                 </Button>
+                <br></br>
+                
                 <Button onClick={(e) => orderStatusChange(e, "OUTFORDELIVERY", order._id)} style={{
                   margin:5
                 }}>
                 Out For Delivery
                 </Button>
+                <br></br>
                 
                 <Button onClick={(e) => orderStatusChange(e, "RETURN INIT", order._id)} style={{
                   margin:5
                 }}>
                 Return Init
                 </Button>
+                <br></br>
+
                 <Button onClick={(e) => orderStatusChange(e, "RETURN DONE", order._id)} style={{
                   margin:5
                 }}>
                 Returned
                 </Button>
+                <br></br>
+
                 <Button onClick={(e) => orderStatusChange(e, "REFUND INIT", order._id)} style={{
                   margin:5
                 }}>
                 Refund Init
                 </Button>
+                <br></br>
+
                 <Button onClick={(e) => orderStatusChange(e, "REFUNDED", order._id)} style={{
                   margin:5
                 }}>
                 Refundded
                 </Button>
+                <br></br>
           
                 <Button onClick={(e) => orderStatusChange(e, "DELIVERED", order._id)} style={{
                   margin:5
                 }}>
                   Delivered
                 </Button>
+                <br></br>
+
                 <Button onClick={(e) => orderStatusChange(e, "CANCELLED", order._id)} style={{
                   margin:5
                 }}>
                   Cancelled
                 </Button>
+                <br></br>
+
                 <Button onClick={(e) => sendUserWhatAppOrderStatus(e, "UPDATE WA", order)} style={{
                   margin:5,
                   backgroundColor:'#3407F8'
@@ -627,10 +685,15 @@ function Orders() {
                 </Button>
               </td>
               </tr>
+              <hr style={{
+                height:5,
+                background: 'lime'
+              }}></hr>
+              </>
             )
           })
           }
-          
+         
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
       <Table striped style={{overflow: "hidden"}} bordered>

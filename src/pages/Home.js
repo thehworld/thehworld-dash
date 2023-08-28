@@ -6,9 +6,13 @@ import { RiNumbersFill } from 'react-icons/ri'
 import { FaMoneyCheckAlt } from 'react-icons/fa'
 import { FaUsersSlash } from 'react-icons/fa'
 import {MdProductionQuantityLimits} from 'react-icons/md'
+import { Bar } from 'react-chartjs-2';
 import { apiCheck, dashboardStats, makeStatusUpdateView } from '../api/Api'
+import { Chart, LinearScale } from 'chart.js'
 
 export default function Home() {
+
+
 
 
     const [totalUsers, settotalUsers] = useState(0);
@@ -47,10 +51,54 @@ export default function Home() {
         // makeStatsUpdate()
     }, [])
     
+    const data = [
+        "No. View", "Total Sales"
+    ]
+
+    const chartData = {
+        labels: ["Views", "Sales"], // Array of labels for the bars
+        datasets: [
+          {
+            label: 'Bar Chart Example', // Label for the dataset
+            backgroundColor: 'rgba(75, 192, 192, 0.6)', // Bar color
+            borderColor: 'rgba(75, 192, 192, 1)', // Border color
+            borderWidth: 1, // Border width
+            data: [totalUsers, totalOrders], // Array of data points
+          },
+        ],
+      };
+    
+      // Define chart options
+      const chartOptions = {
+        scales: {
+          y: {
+            beginAtZero: true, // Start the y-axis at 0
+          },
+        },
+      };
+
+      const containerStyle = {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between', // Adjust as needed
+      };
+    
+      const columnStyle = {
+        flexBasis: 'calc(20% - 20px)', // Adjust the percentage and margin as needed
+        margin: '10px',
+        padding: '20px',
+        backgroundColor: '#f4f4f4', // Add your desired background color
+        border: '1px solid #ccc', // Add a border if desired
+        boxSizing: 'border-box',
+        textAlign: 'center',
+      };
+      
 
   return (
     <div>
         <Container style={{display: "flex", justifyContent: "center", alignItems: "center", flexFlow: "column"}}>
+        <h2>Bar Chart</h2>
+      {/* <Bar data={chartData} options={chartOptions} /> */}
         <h3 style={{padding: "10px", marginTop: "20px"}} className="poppinsBold">STATISTICS</h3>
             <div className="dashboard-grid">
                 <div className='db-comp'>
@@ -108,6 +156,28 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            <div style={containerStyle}>
+      <div style={columnStyle}>
+        <h2>Awareness</h2>
+        {/* Add content for the Awareness column */}
+      </div>
+      <div style={columnStyle}>
+        <h2>Interest</h2>
+        {/* Add content for the Interest column */}
+      </div>
+      <div style={columnStyle}>
+        <h2>Intent</h2>
+        {/* Add content for the Intent column */}
+      </div>
+      <div style={columnStyle}>
+        <h2>Consideration</h2>
+        {/* Add content for the Consideration column */}
+      </div>
+      <div style={columnStyle}>
+        <h2>Decision</h2>
+        {/* Add content for the Decision column */}
+      </div>
+    </div>
         </Container>
     </div>
   )
