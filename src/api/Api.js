@@ -284,3 +284,25 @@ export const getAllOrderIssues = () => {
             console.log("Error - ", err);
         });
 }
+
+
+// Offer Controls Here
+
+export const deleteOfferCode = (id) => {
+    return axios.post(`${API_USE}/offer/delete`, { id })
+        .then((res) => {
+            return res
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+
+export const disableOfferCode = (id) => {
+    return axios.post(`${API_USE}/offer/disable`, { id })
+        .then((res) => {
+            return res
+        }).catch((err) => {
+            console.log(err);
+        });
+}

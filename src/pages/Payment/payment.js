@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { createOfferCode, getAllOffers } from "../../api/Api";
+import { createOfferCode, deleteOfferCode, disableOfferCode, getAllOffers } from "../../api/Api";
 import { v4 as uuidv4 } from 'uuid';
 import firebase from 'firebase/compat/app';
 import {
@@ -120,6 +120,28 @@ const Payment = () => {
 }
 
 
+  const deleteOffer = (e, id) => {
+      e.preventDefault();
+      deleteOfferCode(id).then((res) => {
+        console.log(res.offer);
+        setfetchOffers(!fetchOffers);
+      }).catch((err) => {
+        console.log("Error - ", err);
+      })
+    }
+
+
+  const disableOffer = (e, id) => {
+      e.preventDefault();
+      disableOfferCode(id).then((res) => {
+        console.log(res.offer);
+        setfetchOffers(!fetchOffers);
+      }).catch((err) => {
+        console.log("Error - ", err);
+      })
+  }
+
+
     return(
        <>
         <div
@@ -181,21 +203,42 @@ const Payment = () => {
             <div>
                 {console.log('item', item)}
               <li key={index}>{`Code: ${item.code}, Value: ${item.value}`}</li>
+              {item.status === "ACTIVE" ? (
+ <button style={{
+  width:150,
+  height:32,
+  backgroundColor: '#FFFFFF',
+  borderRadius:5,
+  marginRight:5
+}}
+  onClick={(e) => disableOffer(e, item._id)}
+>
+  Disable
+</button>
+              ) : (
+                <button style={{
+                  width:150,
+                  height:32,
+                  backgroundColor: '#50FF58',
+                  borderRadius:5,
+                  marginRight:5
+                }}
+                  onClick={(e) => disableOffer(e, item._id)}
+                >
+                  Enable
+                </button>
+              )
+
+              }
+             
               <button style={{
                 width:150,
                 height:32,
                 backgroundColor: '#FFFFFF',
                 borderRadius:5,
-                marginRight:5
-              }}>
-                Disable
-              </button>
-              <button style={{
-                width:150,
-                height:32,
-                backgroundColor: '#FFFFFF',
-                borderRadius:5,
-              }}>
+              }}
+              onClick={(e) => deleteOffer(e, item._id)}
+              >
                 Delete
               </button>
               </div>
