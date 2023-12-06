@@ -38,7 +38,7 @@ export default function Navbar() {
           <Badge badgeContent={4} color="primary">
             <Mail color="action" />
           </Badge>
-          </div>
+          </div> 
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>

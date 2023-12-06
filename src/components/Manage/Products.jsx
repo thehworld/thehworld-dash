@@ -5,7 +5,7 @@ import TabList from '@mui/joy/TabList';
 import Tab, { tabClasses } from '@mui/joy/Tab';
 import TabPanel from '@mui/joy/TabPanel';
 import Typography from '@mui/joy/Typography';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, FormText, Modal } from 'reactstrap';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { createProduct, editProduct, getAllCategory, getAllProducts } from '../../api/Api';
+import { createProduct, editProduct, getAllCategory, getAllProducts ,deleteProduct } from '../../api/Api';
 import firebase from 'firebase/compat/app';
 import {
     getStorage,
@@ -30,6 +30,8 @@ import {
 import { ref, runTransaction, getDatabase, set , onValue , get, onChildAdded, onChildChanged, onChildRemoved  } from 'firebase/database';
 import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 import { realDB } from './lib/initFirebase';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 import 'firebase/database';
 import 'firebase/storage';
 import { Select } from '@mui/material';
@@ -162,6 +164,8 @@ function Products() {
   const [usage, setUsage] = useState("");
   const [benifits, setBenifits] = useState("");
   const [productTable, setProductTable] = useState([]);
+  // const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [eddtpopupopen, setEddtpopupopen] = useState(false);
 
   const handleImageUpload = (e) => {
     const fileList = e.target.files; // Get uploaded files as FileList
@@ -203,6 +207,7 @@ function Products() {
 
 
   const handleSubmit = (e) => {
+    console.log("handle create submit!!!!");
     e.preventDefault();
   
     createProduct({
@@ -304,6 +309,7 @@ function Products() {
         setBenifits(editThisProduct[0].howTo)
         setfileUploadURL(editThisProduct[0].productImages[0]);
         setfileUploadURL2(editThisProduct[0].productImages[1]);
+        setActiveTab(0);
   }
 
   const handleEditSubmit = (e, id) => {
@@ -323,7 +329,12 @@ function Products() {
     })
     .then((res) => {
       if(res){
-        setIsSuccess(true)
+        setIsSuccess(true);
+        setActiveTab(1);
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       }
       setProductName("")
       setProductCategory("")
@@ -346,9 +357,21 @@ function Products() {
   }
 
 
-  const deleteProduct = (e) => {
+  const deletethisProduct = (e,productid) => {
     e.preventDefault();
+    deleteProduct(productid).then((res) => {
+        getAllProductsHandler(); 
+    })
+    .catch((err) => {
+      console.log("error creating product", err)
+    })
   }
+
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleChangeTab = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
 
 
@@ -356,7 +379,8 @@ function Products() {
         <Tabs
         size="sm"
         aria-label="Pricing plan"
-        defaultValue={0}
+        value={activeTab}
+        onChange={handleChangeTab}
         sx={(theme) => ({
           width: "97%",
           minHeight: "88vh",
@@ -402,7 +426,7 @@ function Products() {
         </TabList>
         <TabPanel value={0} sx={{ p: 3 }}>
           <div>   
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={(e)=>e.preventDefault()}>
             <FormGroup>
               <Label for="exampleEmail">Product name</Label>
               <Input type="text" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} />
@@ -514,6 +538,7 @@ function Products() {
                       <TableCell >stock </TableCell>
                       <TableCell >usage </TableCell>
                       <TableCell >benifits </TableCell>
+                      <TableCell >More </TableCell>
                       
                     </TableRow>
                   </TableHead>
@@ -527,13 +552,13 @@ function Products() {
                           {data.productName}
                         </TableCell>
                         <TableCell >
-                        {/* <div className="productimg-manage-grid">
-                          {data.images.map((imageUrl, index) => (
+                        <div className="productimg-manage-grid">
+                          {data.productImages.length > 0 && data.productImages.map((imageUrl, index) => (
                             <div key={index} >
                               <img src={imageUrl} className="productimg-manage" alt={`Image ${index + 1}`} />
                             </div>
                           ))}
-                        </div> */}
+                        </div>
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {data.productCategory}
@@ -562,7 +587,26 @@ function Products() {
                         <TableCell component="th" scope="row">
                           {data.benifits}
                         </TableCell>
-                        <Button style={{
+                        <TableCell >
+                        <div className='relative'>
+                        <div className='text-red-500 p-4 cursor-pointer'  onClick={()=>setEddtpopupopen(true)}><MoreVertIcon/></div>
+                        {
+                          eddtpopupopen ?
+                           <div className='absolute rounded-lg top-0 -left-10 border  bg-white'>
+                            <div className='text-red-600 font-bold text-end mr-2 cursor-pointer' onClick={()=>setEddtpopupopen(false)}>X</div>
+                            <div className='flex flex-col gap-2 py-2 px-4'>
+                              <div className='cursor-pointer font-bold text-orange-500'  onClick={(e) => editThisProduct(e, data._id)}>Edit</div>
+                              <div className='cursor-pointer font-bold text-red-500'  onClick={(e) => deletethisProduct(e, data._id)}>Delete</div>
+                            </div>
+                           </div>
+                          :
+                          null
+                        }                      
+                         </div>
+                        </TableCell>
+
+
+                        {/*<Button style={{
                           marginTop:15
                         }}
                         onClick={(e) => editThisProduct(e, data._id)}
@@ -571,9 +615,12 @@ function Products() {
                         </Button>
                         <Button style={{
                           marginTop:15
-                        }}>
+                        }}
+                        onClick={(e) => deletethisProduct(e, data._id)}
+                        >
                           Delete
-                        </Button>
+                        </Button> */}
+
                       </TableRow>
                     ))}
                   </TableBody>

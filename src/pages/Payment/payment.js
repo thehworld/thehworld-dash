@@ -207,7 +207,7 @@ const Payment = () => {
  <button style={{
   width:150,
   height:32,
-  backgroundColor: '#FFFFFF',
+  backgroundColor: 'orange',
   borderRadius:5,
   marginRight:5
 }}
@@ -228,13 +228,11 @@ const Payment = () => {
                   Enable
                 </button>
               )
-
-              }
-             
+              }             
               <button style={{
                 width:150,
                 height:32,
-                backgroundColor: '#FFFFFF',
+                backgroundColor: 'red',
                 borderRadius:5,
               }}
               onClick={(e) => deleteOffer(e, item._id)}
