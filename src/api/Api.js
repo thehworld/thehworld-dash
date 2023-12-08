@@ -5,8 +5,8 @@ const API_TEST = "https://thehworld-v1.onrender.com";
 const API_STAGING = "https://thehworld.loca.lt/api/web";
 const API_DEV = "http://localhost:8080/api/web"
 
-// const API_USE = API;
-const API_USE = API_DEV;
+const API_USE = API;
+// const API_USE = API_DEV;
 
 export const apiCheck = () => {
     axios.get(`${API_TEST}/`)
