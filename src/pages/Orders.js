@@ -163,7 +163,7 @@ function Orders() {
       // })
 
       getOrdersbyfilter(orderfilters).then((res) => {
-        // console.log("All Orders", res.data);
+        console.log("All Orders", res.data);
         setallOrders(res.data.orders);
         setStatusCount(res.data.statusCounts)
     }).catch((err) => {
@@ -472,8 +472,16 @@ function Orders() {
   
 
   const getStatusCount = (status) => {
-    return statusCount && statusCount[status] !== undefined ? statusCount[status] : 0;
-  };
+      console.log("status",status);
+      const filteredStatus = statusCount.length > 0 && statusCount.find(item => item.status === status);
+       if(filteredStatus){
+           return filteredStatus.count ;
+       }
+       else{
+           return 0 ;
+       }
+      
+    };
 
   const TimeFilterHandler =(e)=>{
        orderfilters.Time = e.target.value ;
