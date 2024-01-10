@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { getAUser, getAllUsers } from '../api/Api';
 import { useNavigate } from 'react-router-dom';
 import "./Users.css"
+import LoadingScreen from './LoadingScreen';
 
 
 export default function Users() {
@@ -21,10 +22,14 @@ export default function Users() {
   const [isLoading, setisLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+
   const getAllUsersFetch = () => {
+    setisLoading(true);
     getAllUsers().then((res) => {
         console.log("Users - ", res);
         setallUsers(res.data.allUsers);
+    setisLoading(false);
+
     }).catch((err) => {
         console.log("Error - ", err);
     })
@@ -48,6 +53,12 @@ export default function Users() {
   }
 
   return (
+    <React.Fragment>
+      {
+        isLoading ? <LoadingScreen/>
+        :
+
+      
     <div>
         <Container>
         <h3 style={{padding: "10px", textAlign: "center", marginTop: "20px"}} className="poppinsBold">USERS</h3>
@@ -57,7 +68,7 @@ export default function Users() {
           </div>
         <div class="grid-container">
        
-        {isLoadingSection()}
+        {/* {isLoadingSection()} */}
               {allUsers && allUsers.filter((user) => {
                 if (searchTerm == "") {
                   return allUsers
@@ -96,5 +107,7 @@ export default function Users() {
 </Container>
 
         </div>
+        }
+        </React.Fragment>
   );
 }

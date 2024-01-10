@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom"
 import { checkOrderPayment, getAOrderDetails } from "../../api/Api";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { Button, CircularProgress, Container } from "@mui/material";
+import LoadingScreen from "../LoadingScreen";
 
 const DetailedOrder = () => {
 
@@ -10,11 +11,14 @@ const DetailedOrder = () => {
 
     const [orderDetail, setorderDetail] = useState({});
     const [userDetails, setuserDetails] = useState("");
+    const [isloading, setisLoading] = useState(false);
     const getAOrderDetailsHere = () => {
+        setisLoading(true);
         getAOrderDetails(orderId).then((res) => {
             console.log("Order Detail - ", res.data);
             setorderDetail(res.data.order);
             setuserDetails(res.data.user);
+            setisLoading(false);
         }).catch((error) => {
             console.log("Error - ", error);
         })
@@ -28,12 +32,14 @@ const DetailedOrder = () => {
     const [paymentStatusCode, setpaymentStatusCode] = useState("")
     const checkOrderPaymentDetails = (e, id) => {
         e.preventDefault();
+        setisLoading(true);
         checkOrderPayment(id).then((res) => {
             console.log("Res - ", res);
             console.log("Res Payment - ", res.data.paymentStatus);
             if(res.data.paymentStatus.code === "PAYMENT_SUCCESS"){
                 setpaymentStatusCode(res.data.paymentStatus.code);
             }
+            setisLoading(false);
         }).catch((err) => {
             console.log("Error - ", err);
         }) 
@@ -48,6 +54,10 @@ const DetailedOrder = () => {
     }
 
     return(
+        <Fragment>
+        {
+         isloading ? <LoadingScreen/>
+         :
         <Container>
             <div style={{boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px", margintop: "20px", padding: "10px", minHeight: "100vh"}}>
             <h2>
@@ -149,6 +159,8 @@ const DetailedOrder = () => {
              </div>
           
         </Container>
+         }
+         </Fragment>
     )
 
 }

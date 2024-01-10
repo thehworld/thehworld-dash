@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Box, Input, Select, Tab, Tabs, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
@@ -23,6 +23,7 @@ import MoreIcon from '@mui/icons-material/More';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import More from "@mui/icons-material/More";
+import LoadingScreen from "./LoadingScreen";
 
 
 const options = [
@@ -62,6 +63,7 @@ const LongMenu = ({navigate, id}) => {
   
 
   return (
+    <Fragment>
     <div>
       <IconButton
         aria-label="more"
@@ -95,6 +97,8 @@ const LongMenu = ({navigate, id}) => {
         ))}
       </Menu>
     </div>
+    
+    </Fragment>
   );
 }
 
@@ -161,11 +165,13 @@ function Orders() {
       // }).catch((err) => {
       //   console.log("Error - ", err);
       // })
-
+      setisLoading(true);
       getOrdersbyfilter(orderfilters).then((res) => {
         console.log("All Orders", res.data);
         setallOrders(res.data.orders);
-        setStatusCount(res.data.statusCounts)
+        setStatusCount(res.data.statusCounts);
+      setisLoading(false);
+
     }).catch((err) => {
       console.log("Error - ", err);
     })
@@ -234,16 +240,7 @@ function Orders() {
      setOrderFilters({...orderfilters});
   };
 
-  const isLoadingSection = () => {
-    if(isLoading){
-      return(
-        <div className="loading">
-          <div></div>
-          <div></div>
-        </div> 
-      )
-    }
-  }
+  
 
 
 
@@ -346,7 +343,7 @@ function Orders() {
         </TableRow>
       </TableHead>
       <TableBody>
-      {isLoadingSection()}
+      
               {allOrders && allOrders.filter((order) => { 
                 if(status === ""){
                 if (searchTerm == "" && order.orderStatus === status ) {
@@ -490,6 +487,11 @@ function Orders() {
   
 
   return(
+    <Fragment>
+       {
+        isLoading ? <LoadingScreen/>
+        :
+
     <div style={{padding: "0 40px"}}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -592,7 +594,7 @@ function Orders() {
         {orderTables('REFUNDED')}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={11}>
-        {orderTables('CANCELLED')}
+        {orderTables('CANCELLED')} 
       </CustomTabPanel>
      
       <Modal
@@ -613,6 +615,11 @@ function Orders() {
           </Typography>          
         </Box>
       </Modal>
+     
+      {/* <LoadingScreen/> */}
+      {/* {
+        isLoading ? <LoadingScreen/> : null
+      } */}
      
       {/* <CustomTabPanel value={value} index={1}>
       <Table striped style={{overflow: "hidden"}} bordered>
@@ -2870,6 +2877,8 @@ function Orders() {
 
      
     </div>
+    } 
+    </Fragment>
   )
 }
 

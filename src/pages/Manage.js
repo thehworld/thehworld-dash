@@ -19,6 +19,7 @@ import { nanoid } from 'nanoid';
 
 import Products from '../components/Manage/Products';
 import Category from '../components/Manage/Category';
+import LoadingScreen from './LoadingScreen';
 
 export default function Manage() {
 
@@ -31,6 +32,8 @@ export default function Manage() {
     width: "100"
   };
   const [images, setImages] = useState({});
+  const [isLoading, setisLoading] = useState(false);
+
 
 
 
@@ -38,6 +41,10 @@ export default function Manage() {
 
 
   return (
+    <React.Fragment>
+      {
+        isLoading ? <LoadingScreen/>
+        :
     <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
     <Tabs
       size="sm"
@@ -98,5 +105,7 @@ export default function Manage() {
     </Tabs>
             
     </div>
+    }
+    </React.Fragment>
   );
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import { Container } from '@mui/material'
 import { FaUsers } from 'react-icons/fa'
 import { AiFillMessage } from 'react-icons/ai'
@@ -9,6 +9,7 @@ import {MdProductionQuantityLimits} from 'react-icons/md'
 import { Bar } from 'react-chartjs-2';
 import { apiCheck, dashboardStats, makeStatusUpdateView } from '../api/Api'
 import { Chart, LinearScale } from 'chart.js'
+import LoadingScreen from './LoadingScreen'
 
 export default function Home() {
 
@@ -21,8 +22,10 @@ export default function Home() {
     const [totalOrderProduct, settotalOrderProduct] = useState(0);
     const [viewsWebsite, setviewsWebsite] = useState(0);
     const [viewsProductView, setviewsProductView] = useState(0);
+    const [isLoading, setisLoading] = useState(false);
 
     const getStats = () => {
+      setisLoading(true);
         dashboardStats().then((res) => {
             console.log("Res Stats - ", res.data);
             settotalUsers(res.data.totalUsersCount);
@@ -31,6 +34,8 @@ export default function Home() {
             settotalOrderProduct(res.data.totalOrderProducts);
             setviewsWebsite(res.data.views[0].totalWebsiteViews);
             setviewsProductView(res.data.views[0].totalProductViews);
+           setisLoading(false);
+
         }).catch((err) => {
             console.log("Error - ", err);
         })
@@ -95,7 +100,11 @@ export default function Home() {
       
 
   return (
-    <div>
+    <Fragment>
+      {
+        isLoading ? <LoadingScreen/>
+        :
+         <div>
         <Container style={{display: "flex", justifyContent: "center", alignItems: "center", flexFlow: "column"}}>
         <h2>Bar Chart</h2>
       {/* <Bar data={chartData} options={chartOptions} /> */}
@@ -180,5 +189,8 @@ export default function Home() {
     </div>
         </Container>
     </div>
+    }
+    </Fragment>
+ 
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { createOfferCode, deleteOfferCode, disableOfferCode, getAllOffers } from "../../api/Api";
 import { v4 as uuidv4 } from 'uuid';
 import firebase from 'firebase/compat/app';
@@ -14,6 +14,7 @@ import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 import { realDB } from '../../components/Manage/lib/initFirebase';
 import 'firebase/database';
 import 'firebase/storage';
+import LoadingScreen from "../LoadingScreen";
 
 const Payment = () => {
 
@@ -122,28 +123,43 @@ const Payment = () => {
 
   const deleteOffer = (e, id) => {
       e.preventDefault();
+      setisLoading(true);
       deleteOfferCode(id).then((res) => {
         console.log(res.offer);
         setfetchOffers(!fetchOffers);
+        setisLoading(false);
+
       }).catch((err) => {
         console.log("Error - ", err);
+        setisLoading(false);
+
       })
     }
 
 
   const disableOffer = (e, id) => {
       e.preventDefault();
+      setisLoading(true);
       disableOfferCode(id).then((res) => {
         console.log(res.offer);
         setfetchOffers(!fetchOffers);
+      setisLoading(false);
       }).catch((err) => {
         console.log("Error - ", err);
+      setisLoading(false);
+
       })
   }
 
 
     return(
+      <Fragment>
+        {
+        isLoading ? <LoadingScreen/>
+       :
+      
        <>
+       
         <div
         style={{
           display: 'flex',
@@ -287,6 +303,8 @@ const Payment = () => {
             </div>  
         </div>
         </>
+         }
+         </Fragment>
     )
 
 }
